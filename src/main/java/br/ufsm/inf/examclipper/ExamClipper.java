@@ -1,12 +1,10 @@
-package Extractor;
+package br.ufsm.inf.examclipper;
 
-import View.ExtractorGUI;
-
-public class Extractor {
+public class ExamClipper {
 
    public static void main(String[] args) {
 
-      ExtractorGUI gui = new ExtractorGUI();
+      ExamClipperGUI gui = new ExamClipperGUI();
       gui.setVisible(true);
    }
 }

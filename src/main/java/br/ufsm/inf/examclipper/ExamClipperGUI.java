@@ -1,12 +1,12 @@
-package View;
+package br.ufsm.inf.examclipper;
 
-import Controller.CropFinder;
-import Controller.PDFConversor;
-import Controller.CropExtractor;
-import GUI.HomePanel;
-import GUI.PageItemList;
-import GUI.PagePanel;
-import Model.Page;
+import br.ufsm.inf.examclipper.model.Page;
+import br.ufsm.inf.examclipper.gui.HomePanel;
+import br.ufsm.inf.examclipper.gui.PagePanel;
+import br.ufsm.inf.examclipper.gui.PageItemList;
+import br.ufsm.inf.examclipper.controller.CropFinder;
+import br.ufsm.inf.examclipper.controller.PDFConversor;
+import br.ufsm.inf.examclipper.controller.CropExtractor;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +56,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class ExtractorGUI extends JFrame {
+public class ExamClipperGUI extends JFrame {
 
+   private static final String WINDOW_TITLE = "[ExamClipper]"; 
+           
    private static final int DEFAULT_WIDTH  = 800;
    private static final int DEFAULT_HEIGHT = 600;
    private static final int MIN_WIDTH      = 400;
@@ -69,8 +71,8 @@ public class ExtractorGUI extends JFrame {
    
    private Page page;
    
-   public ExtractorGUI() {
-      super("[Extractor]");
+   public ExamClipperGUI() {
+      super(WINDOW_TITLE);
       
       lPages = new ArrayList<>();
       
@@ -111,7 +113,7 @@ public class ExtractorGUI extends JFrame {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());         
       }
       catch(Exception e) {
-         System.out.println(" > [ExtractorGUI] Error to set LookAndFeel: " + e);
+         System.out.println(" > [ExamClipperGUI] Error to set LookAndFeel: " + e);
          e.printStackTrace();
       } 
    }
@@ -336,7 +338,7 @@ public class ExtractorGUI extends JFrame {
       int result = fileChooser.showOpenDialog(this);
       if(result == JFileChooser.APPROVE_OPTION) {        
          File file = fileChooser.getSelectedFile();
-         System.out.println(" > [ExtractorGUI] Selected File: " + file.getName());
+         System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
          SwingUtilities.invokeLater(() -> loadPDF(file));
       }
    }
@@ -348,7 +350,7 @@ public class ExtractorGUI extends JFrame {
       int result = fileChooser.showOpenDialog(this);
       if(result == JFileChooser.APPROVE_OPTION) {        
          File file = fileChooser.getSelectedFile();
-         System.out.println(" > [ExtractorGUI] Selected File: " + file.getName());
+         System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
          SwingUtilities.invokeLater(() -> saveClippings(file));
       }
     }
@@ -396,7 +398,7 @@ public class ExtractorGUI extends JFrame {
       this.lPages = lPages;
       attFilesList();
       
-      System.out.println(" > [ExtractorGUI] Total pages founded: " + lPages.size());
+      System.out.println(" > [ExamClipperGUI] Total pages founded: " + lPages.size());
       mPagePanel.setPage(lPages.get(0));
 
       previewPanel.removeAll();
@@ -418,7 +420,7 @@ public class ExtractorGUI extends JFrame {
    
    // Events
    private void findClippingsButtonActionPerformed(ActionEvent evt) {                                                    
-      System.out.println(" > [GUI] Finding clippings...");
+      System.out.println(" > [ExamClipperGUI] Finding clippings...");
       findClippings();
    }          
    
@@ -427,17 +429,17 @@ public class ExtractorGUI extends JFrame {
    }                                                       
 
    private void mergeSelectedClippingsButtonActionPerformed(ActionEvent evt) {                                                             
-      System.out.println(" > [GUI] Merging selected clippings...");
+      System.out.println(" > [ExamClipperGUI] Merging selected clippings...");
       mPagePanel.mergeSelectedRectangles();
    }                                                            
 
    private void extractClippingsActionPerformed(ActionEvent evt) {                                                 
-      System.out.println(" > [GUI] Extracting clippings...");
+      System.out.println(" > [ExamClipperGUI] Extracting clippings...");
       showSaveCroppingsDialog();
    }                                                
 
    private void typeClippingsComboBoxItemStateChanged(ItemEvent evt) {                                                       
-      System.out.println(" > [GUI] Changing clipping type...");
+      System.out.println(" > [ExamClipperGUI] Changing clipping type...");
       mPagePanel.setNewTypeToSelectedRectangle(typeClippingsComboBox.getSelectedIndex());
       mPagePanel.repaint();
    }                                                      
@@ -479,7 +481,7 @@ public class ExtractorGUI extends JFrame {
    private void loadImage(int index) {
       page = lPages.get(index);
       mPagePanel.setPage(page);
-      System.out.println(" > [GUI] " + page.getFilename() + " loaded");
+      System.out.println(" > [ExamClipperGUI] " + page.getFilename() + " loaded");
    }
    
    //####################################

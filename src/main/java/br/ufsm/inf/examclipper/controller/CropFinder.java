@@ -1,6 +1,6 @@
 package br.ufsm.inf.examclipper.controller;
 
-import br.ufsm.inf.examclipper.model.CropRectangle;
+import br.ufsm.inf.examclipper.model.Clip;
 import br.ufsm.inf.examclipper.model.Page;
 
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ public class CropFinder extends Thread {
 
    @Override
    public void run() {
-      // Clear previous rectangles
-      page.clearRectangles();
+      // Remove all previous clippings
+      page.removeAllClippings();
 
       // Original Image
       Mat image = page.getImage().clone();
@@ -75,7 +75,7 @@ public class CropFinder extends Thread {
          Rect rect = Imgproc.boundingRect(mop);
 
          if((rect.width * rect.height > 2500) && (rect.width != image.cols()) && (rect.height != image.rows())) {
-            page.addCropRectangle(new CropRectangle(rect.x, rect.y, rect.width, rect.height));
+            page.addClipping(new Clip(rect.x, rect.y, rect.width, rect.height));
          }
       }
 

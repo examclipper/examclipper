@@ -3,7 +3,7 @@ package br.ufsm.inf.examclipper.model;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class CropRectangle extends Rectangle {
+public class Clip extends Rectangle {
    
    public static final int CORNER_DIMENSION = 10;
 
@@ -22,15 +22,15 @@ public class CropRectangle extends Rectangle {
    // isSelected
    private boolean selected;
    
-   public CropRectangle() {
+   public Clip() {
       this(0, 0, 0, 0);
    }
    
-   public CropRectangle(CropRectangle rect) {
+   public Clip(Clip rect) {
       this(rect.x, rect.y, rect.width, rect.height);
    }
    
-   public CropRectangle(int x, int y, int width, int height) {
+   public Clip(int x, int y, int width, int height) {
       super();
       
       this.x        = x;

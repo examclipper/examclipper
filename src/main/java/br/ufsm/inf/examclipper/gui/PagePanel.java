@@ -2,7 +2,7 @@ package br.ufsm.inf.examclipper.gui;
 
 import br.ufsm.inf.examclipper.ExamClipperGUI;
 import br.ufsm.inf.examclipper.model.Page;
-import br.ufsm.inf.examclipper.model.CropRectangle;
+import br.ufsm.inf.examclipper.model.Clip;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -33,7 +33,7 @@ public class PagePanel extends JPanel {
    // Current Page
    private Page page;
    
-   private CropRectangle crop;
+   private Clip crop;
    private Point         auxPoint;
    private Point         auxCornerPoint;
    
@@ -95,7 +95,7 @@ public class PagePanel extends JPanel {
             drawCropRectangle(g2, crop);
          }
          
-         for (CropRectangle rect : page.getRectangles()) {
+         for (Clip rect : page.getClippings()) {
             drawCropRectangle(g2, rect);
             if (rect.isSelected()) {
                drawSelectionOverlay(g2, rect);
@@ -106,19 +106,19 @@ public class PagePanel extends JPanel {
       g2.dispose();
    }
 
-   private void drawCropRectangle(Graphics2D g2, CropRectangle rect) {
+   private void drawCropRectangle(Graphics2D g2, Clip rect) {
       Color color = Color.BLACK;
       String type = "Nenhum";
       switch(rect.getType()) {
-         case CropRectangle.STATEMENT_TYPE:
+         case Clip.STATEMENT_TYPE:
             color = Color.BLUE;
             type  = "Enunciado";
             break;
-         case CropRectangle.IMAGE_TYPE:
+         case Clip.IMAGE_TYPE:
             color = Color.GREEN;
             type  = "Imagem";
             break;
-         case CropRectangle.ALTERNATIVE_TYPE:
+         case Clip.ALTERNATIVE_TYPE:
             color = Color.RED;
             type  = "Alternativas";
             break;
@@ -138,7 +138,7 @@ public class PagePanel extends JPanel {
       g2.setStroke(oldStroke);
    }
    
-   private void drawSelectionOverlay(Graphics2D g2, CropRectangle rect) {
+   private void drawSelectionOverlay(Graphics2D g2, Clip rect) {
       g2.setComposite(XOR_COMPOSITE);
       g2.setColor(Color.BLACK);
       g2.setStroke(SELECTED_STROKE);
@@ -153,7 +153,7 @@ public class PagePanel extends JPanel {
             
       // Corners
       g2.setColor(Color.RED);
-      int corner = CropRectangle.CORNER_DIMENSION;
+      int corner = Clip.CORNER_DIMENSION;
       int x = rect.x - (corner / 2);
       int y = rect.y - (corner / 2);
       g2.fillRect(x,              y,               corner, corner);
@@ -163,36 +163,36 @@ public class PagePanel extends JPanel {
    }
    
    public void deleteToSmallRectangles() {
-      List<CropRectangle> rectsToTrash = new ArrayList<>();
-      for(CropRectangle rect : page.getRectangles()) {
-         if(rect.getWidth()  < 2 * CropRectangle.CORNER_DIMENSION ||
-            rect.getHeight() < 2 * CropRectangle.CORNER_DIMENSION) {
+      List<Clip> rectsToTrash = new ArrayList<>();
+      for(Clip rect : page.getClippings()) {
+         if(rect.getWidth()  < 2 * Clip.CORNER_DIMENSION ||
+            rect.getHeight() < 2 * Clip.CORNER_DIMENSION) {
              rectsToTrash.add(rect);
          }
       }
-      page.removeRectangles(rectsToTrash);
+      page.removeCleppings(rectsToTrash);
   }
    
    public void deleteSelectedRectangles() {
-      List<CropRectangle> removeList = new ArrayList<>();
-      for(CropRectangle rect : page.getRectangles()) {
+      List<Clip> removeList = new ArrayList<>();
+      for(Clip rect : page.getClippings()) {
          if (rect.isSelected()) {
             removeList.add(rect);
          }
       }
-      page.removeRectangles(removeList);
+      page.removeCleppings(removeList);
       repaint();
    }
    
    private void diselectAllRectangles() {
-      for(CropRectangle rect : page.getRectangles()) {
+      for(Clip rect : page.getClippings()) {
          rect.setSelected(false);
       }
    }
    
    private int getNumbersOfSelectedRectangles() {
       int numbersOfSelecteds = 0;
-      for(CropRectangle rect : page.getRectangles()) {
+      for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
             numbersOfSelecteds++;
          }
@@ -201,7 +201,7 @@ public class PagePanel extends JPanel {
    }
    
    private int getFirstSelectedRectangles() {
-      for(CropRectangle rect : page.getRectangles()) {
+      for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
             return rect.getType();
          }
@@ -215,7 +215,7 @@ public class PagePanel extends JPanel {
       int maxX = Integer.MIN_VALUE;
       int maxY = Integer.MIN_VALUE;
             
-      for(CropRectangle rect : page.getRectangles()) {
+      for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
             int x0 = rect.x;
             int y0 = rect.y;
@@ -229,11 +229,11 @@ public class PagePanel extends JPanel {
          }
       }
       deleteSelectedRectangles();
-      page.addCropRectangle(new CropRectangle(minX, minY, maxX - minX, maxY - minY));
+      page.addClipping(new Clip(minX, minY, maxX - minX, maxY - minY));
    }
    
    public void setNewTypeToSelectedRectangle(int type) {
-      for(CropRectangle rect : page.getRectangles()) {
+      for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
             rect.setType(type);
          }
@@ -292,20 +292,20 @@ public class PagePanel extends JPanel {
       public void mousePressed(MouseEvent mouseEvent) {
          Point point = mouseEvent.getPoint();
          if(mouseEvent.getButton() == MouseEvent.BUTTON1) {
-            for (CropRectangle rect : page.getRectangles()) {
+            for (Clip rect : page.getClippings()) {
                int cornerClicked = rect.getCornerClicked(point);
                if(cornerClicked != -1) {
                   switch(cornerClicked) {
-                     case CropRectangle.UL_CORNER:
+                     case Clip.UL_CORNER:
                         auxCornerPoint = new Point(rect.x - point.x,              rect.y - point.y);
                         break;
-                     case CropRectangle.UR_CORNER:
+                     case Clip.UR_CORNER:
                         auxCornerPoint = new Point(rect.x + rect.width - point.x, rect.y - point.y);
                         break;
-                     case CropRectangle.LL_CORNER:
+                     case Clip.LL_CORNER:
                         auxCornerPoint = new Point(rect.x - point.x,              rect.y + rect.height - point.y);
                         break;
-                     case CropRectangle.LR_CORNER:
+                     case Clip.LR_CORNER:
                         auxCornerPoint = new Point(rect.x + rect.width - point.x, rect.y + rect.height - point.y);
                         break;
                   }
@@ -319,7 +319,7 @@ public class PagePanel extends JPanel {
                }
             }
             
-            for(CropRectangle rect : page.getRectangles()) {
+            for(Clip rect : page.getClippings()) {
                if (rect.contains(point)) {
                   action = MOVE_RECT;
                   if(!mouseEvent.isControlDown()) {
@@ -339,9 +339,9 @@ public class PagePanel extends JPanel {
             if(crop == null) {
                diselectAllRectangles();
                gui.attRectanglePanelGUI(getNumbersOfSelectedRectangles(), getFirstSelectedRectangles());
-               crop = new CropRectangle();
+               crop = new Clip();
                crop.setSelected(true);
-               page.addCropRectangle(crop);
+               page.addClipping(crop);
                auxPoint = point;
             }
          }

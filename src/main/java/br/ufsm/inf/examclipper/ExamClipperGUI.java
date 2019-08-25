@@ -454,7 +454,7 @@ public class ExamClipperGUI extends JFrame {
       mergeSelectedClippingsButton.setEnabled(false);
       list.ensureIndexIsVisible(selectedIndex);
       loadImage(selectedIndex);
-      if(page.getNumbersOfRectangles() == 0) {
+      if(page.getNumbersOfClippings()== 0) {
          findClippings();
       }
    }

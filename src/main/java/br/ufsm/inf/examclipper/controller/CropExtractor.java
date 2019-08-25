@@ -1,6 +1,6 @@
 package br.ufsm.inf.examclipper.controller;
 
-import br.ufsm.inf.examclipper.model.CropRectangle;
+import br.ufsm.inf.examclipper.model.Clip;
 import br.ufsm.inf.examclipper.model.Page;
 
 import java.io.File;
@@ -30,28 +30,28 @@ public class CropExtractor {
          String folderPath = path + File.separator + "page-" + (i + 1) + File.separator;  
          verifyPath(folderPath);
 
-         List<CropRectangle> lRectangles = sortList(page.getRectangles());
+         List<Clip> lRectangles = sortList(page.getClippings());
          int totalCrops   = lRectangles.size();
          int successCrops = 0;
 
          for(int j = 0; j < totalCrops; j++) {
-            CropRectangle r = lRectangles.get(j);
+            Clip r = lRectangles.get(j);
             
             Rect ocvRect  = new Rect(r.x, r.y, r.width, r.height);
             Mat  clipping = new Mat(image.clone(), ocvRect);
             
             String filePath = folderPath + (j + 1);
             switch(r.getType()) {
-               case CropRectangle.NOTHING_TYPE:
+               case Clip.NOTHING_TYPE:
                   filePath += "_nenhum";
                   break;
-               case CropRectangle.STATEMENT_TYPE:
+               case Clip.STATEMENT_TYPE:
                   filePath += "_enunciado";
                   break;
-               case CropRectangle.IMAGE_TYPE:
+               case Clip.IMAGE_TYPE:
                   filePath += "_imagem";
                   break;
-               case CropRectangle.ALTERNATIVE_TYPE:
+               case Clip.ALTERNATIVE_TYPE:
                   filePath += "_alternativa";
                   break;
             }
@@ -65,7 +65,7 @@ public class CropExtractor {
       System.out.println(" > [OpenCVController] (" + totalPages + ") pages");
    }
 
-   private List<CropRectangle> sortList(List<CropRectangle> lRectangles) {
+   private List<Clip> sortList(List<Clip> lRectangles) {
       Collections.sort(lRectangles, (rect1, rect2) -> {         
          return rect1.y - rect2.y;
       });

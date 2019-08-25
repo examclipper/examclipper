@@ -18,20 +18,20 @@ public class Page {
    private Mat modified;
    // BufferedImage
    private BufferedImage buffImage;
-   // List of marks in the image
-   private List<CropRectangle> lRectangles;
+   // List of clippings
+   private List<Clip> lClippings;
 
    public Page() {
       this("", "");
    }
 
    public Page(String filename, String path) {
-      this.filename    = filename;
-      this.path        = path;
-      this.image       = null;
-      this.modified    = null;
-      this.buffImage   = null;
-      this.lRectangles = new ArrayList<>();
+      this.filename   = filename;
+      this.path       = path;
+      this.image      = null;
+      this.modified   = null;
+      this.buffImage  = null;
+      this.lClippings = new ArrayList<>();
    }
 
    public String getFilename() {
@@ -74,27 +74,27 @@ public class Page {
       this.buffImage = bufferedImage;
    }
 
-   public List<CropRectangle> getRectangles() {
-      return lRectangles;
+   public List<Clip> getClippings() {
+      return lClippings;
    }
 
-   public void setRectangles(List<CropRectangle> lRectangles) {
-      this.lRectangles = lRectangles;
+   public void setClippings(List<Clip> lClippings) {
+      this.lClippings = lClippings;
    }
 
-   public void addCropRectangle(CropRectangle crop) {
-      this.lRectangles.add(crop);
+   public void addClipping(Clip clipping) {
+      this.lClippings.add(clipping);
    }
 
-   public void removeRectangles(List<CropRectangle> removeList) {
-      lRectangles.removeAll(removeList);
+   public void removeCleppings(List<Clip> removeList) {
+      lClippings.removeAll(removeList);
    }
 
-   public void clearRectangles() {
-      this.lRectangles.clear();
+   public void removeAllClippings() {
+      this.lClippings.clear();
    }
 
-   public int getNumbersOfRectangles() {
-      return lRectangles.size();
+   public int getNumbersOfClippings() {
+      return lClippings.size();
    }
 }

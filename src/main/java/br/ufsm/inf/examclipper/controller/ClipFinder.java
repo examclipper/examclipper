@@ -14,13 +14,13 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-public class CropFinder extends Thread {
+public class ClipFinder extends Thread {
 
-   private Page page;
-   private int  horizontalSize;
-   private int  verticalSize;
+   private final Page page;
+   private final int  horizontalSize;
+   private final int  verticalSize;
 
-   public CropFinder(Page page, int horizontalSize, int verticalSize) {
+   public ClipFinder(Page page, int horizontalSize, int verticalSize) {
       this.page           = page;
       this.horizontalSize = horizontalSize;
       this.verticalSize   = verticalSize;

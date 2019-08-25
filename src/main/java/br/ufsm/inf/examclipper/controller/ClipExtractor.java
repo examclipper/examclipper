@@ -12,13 +12,13 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
-public class CropExtractor {
+public class ClipExtractor {
    
-   public CropExtractor() {
+   public ClipExtractor() {
       // Empty Constructor
    }
    
-   public void extractCrops(String path, List<Page> lPages) {
+   public void extractClippings(String path, List<Page> lPages) {
       System.out.println(" > [OpenCVController] Extracting clippings");
       verifyPath(path);
       int totalPages = lPages.size();
@@ -30,12 +30,12 @@ public class CropExtractor {
          String folderPath = path + File.separator + "page-" + (i + 1) + File.separator;  
          verifyPath(folderPath);
 
-         List<Clip> lRectangles = sortList(page.getClippings());
-         int totalCrops   = lRectangles.size();
-         int successCrops = 0;
+         List<Clip> lClippings  = sortList(page.getClippings());
+         int numbersOfClippings = lClippings.size();
+         int successClippings   = 0;
 
-         for(int j = 0; j < totalCrops; j++) {
-            Clip r = lRectangles.get(j);
+         for(int j = 0; j < numbersOfClippings; j++) {
+            Clip r = lClippings.get(j);
             
             Rect ocvRect  = new Rect(r.x, r.y, r.width, r.height);
             Mat  clipping = new Mat(image.clone(), ocvRect);
@@ -58,19 +58,19 @@ public class CropExtractor {
             filePath += ".tif";
             
             boolean result = Imgcodecs.imwrite(filePath, clipping);
-            if(result) successCrops++;
+            if(result) successClippings++;
          }
-         System.out.println(" -> (" + successCrops + "/" + totalCrops + ") rects");
+         System.out.println(" -> (" + successClippings + "/" + numbersOfClippings + ") clippings");
       }
       System.out.println(" > [OpenCVController] (" + totalPages + ") pages");
    }
 
-   private List<Clip> sortList(List<Clip> lRectangles) {
-      Collections.sort(lRectangles, (rect1, rect2) -> {         
+   private List<Clip> sortList(List<Clip> lClippings) {
+      Collections.sort(lClippings, (rect1, rect2) -> {         
          return rect1.y - rect2.y;
       });
            
-      return lRectangles;
+      return lClippings;
    }
 
    private void verifyPath(String path) {

@@ -1,8 +1,8 @@
-package GUI;
+package br.ufsm.inf.examclipper.gui;
 
-import Model.CropRectangle;
-import Model.Page;
-import View.ExtractorGUI;
+import br.ufsm.inf.examclipper.ExamClipperGUI;
+import br.ufsm.inf.examclipper.model.Page;
+import br.ufsm.inf.examclipper.model.CropRectangle;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class PagePanel extends JPanel {
 
-   private ExtractorGUI gui;
+   private ExamClipperGUI gui;
    // Current Page
    private Page page;
    
@@ -37,11 +37,11 @@ public class PagePanel extends JPanel {
    private Point         auxPoint;
    private Point         auxCornerPoint;
    
-   public PagePanel(ExtractorGUI gui) {
+   public PagePanel(ExamClipperGUI gui) {
       this(gui, null);
    }
    
-   public PagePanel(ExtractorGUI gui, Page page) {
+   public PagePanel(ExamClipperGUI gui, Page page) {
       super();
       
       this.gui  = gui;

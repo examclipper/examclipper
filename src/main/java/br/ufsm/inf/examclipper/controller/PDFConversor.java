@@ -1,6 +1,6 @@
-package Controller;
+package br.ufsm.inf.examclipper.controller;
 
-import Model.Page;
+import br.ufsm.inf.examclipper.model.Page;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

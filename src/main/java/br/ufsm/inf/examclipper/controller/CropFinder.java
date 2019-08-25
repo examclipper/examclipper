@@ -1,7 +1,7 @@
-package Controller;
+package br.ufsm.inf.examclipper.controller;
 
-import Model.CropRectangle;
-import Model.Page;
+import br.ufsm.inf.examclipper.model.CropRectangle;
+import br.ufsm.inf.examclipper.model.Page;
 
 import java.util.ArrayList;
 import java.util.List;

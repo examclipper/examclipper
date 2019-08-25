@@ -1,4 +1,4 @@
-package GUI;
+package br.ufsm.inf.examclipper.gui;
 
 import java.awt.Frame;
 import java.awt.Dialog;

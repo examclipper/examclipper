@@ -1,6 +1,6 @@
-package GUI;
+package br.ufsm.inf.examclipper.gui;
 
-import Model.Page;
+import br.ufsm.inf.examclipper.model.Page;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

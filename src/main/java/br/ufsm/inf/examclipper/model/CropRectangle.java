@@ -1,4 +1,4 @@
-package Model;
+package br.ufsm.inf.examclipper.model;
 
 import java.awt.Point;
 import java.awt.Rectangle;

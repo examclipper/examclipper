@@ -1,6 +1,6 @@
-package GUI;
+package br.ufsm.inf.examclipper.gui;
 
-import View.ExtractorGUI;
+import br.ufsm.inf.examclipper.ExamClipperGUI;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 public class HomePanel extends JPanel {
 
-   private ExtractorGUI gui;
+   private ExamClipperGUI gui;
    
    private JButton loadButton;
 

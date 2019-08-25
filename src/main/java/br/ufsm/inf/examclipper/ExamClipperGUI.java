@@ -4,9 +4,9 @@ import br.ufsm.inf.examclipper.model.Page;
 import br.ufsm.inf.examclipper.gui.HomePanel;
 import br.ufsm.inf.examclipper.gui.PagePanel;
 import br.ufsm.inf.examclipper.gui.PageItemList;
-import br.ufsm.inf.examclipper.controller.CropFinder;
+import br.ufsm.inf.examclipper.controller.ClipFinder;
 import br.ufsm.inf.examclipper.controller.PDFConversor;
-import br.ufsm.inf.examclipper.controller.CropExtractor;
+import br.ufsm.inf.examclipper.controller.ClipExtractor;
 
 import java.io.File;
 import java.io.IOException;
@@ -358,7 +358,7 @@ public class ExamClipperGUI extends JFrame {
    private void loadPDF(File file) {
       try {
          convertPDF(file);
-         setTitle("[Extractor] - " + selectedFile.getName());
+         setTitle(WINDOW_TITLE + " - " + selectedFile.getName());
       }
       catch(Exception e) {
           JOptionPane.showMessageDialog(this, e.getMessage(), "Mensagem de Erro", JOptionPane.ERROR_MESSAGE);
@@ -377,7 +377,7 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void findClippings() {
-      CropFinder cropFinder = new CropFinder(page, hSizeSlider.getValue(), vSizeSlider.getValue());
+      ClipFinder cropFinder = new ClipFinder(page, hSizeSlider.getValue(), vSizeSlider.getValue());
       cropFinder.start();
 
       while(cropFinder.isAlive()) {
@@ -390,8 +390,8 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void saveClippings(File folder) {
-      CropExtractor opcv = new CropExtractor();
-      opcv.extractCrops(folder.getAbsolutePath(), lPages);
+      ClipExtractor opcv = new ClipExtractor();
+      opcv.extractClippings(folder.getAbsolutePath(), lPages);
    }
    
    private void setStateAfterConvertionFinished(List<Page> lPages) {

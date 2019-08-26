@@ -44,7 +44,6 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JProgressBar;
@@ -54,7 +53,11 @@ import javax.swing.LayoutStyle;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.filechooser.FileNameExtensionFilter;
+
+import javafx.embed.swing.JFXPanel;
+import javafx.application.Platform;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 
 public class ExamClipperGUI extends JFrame {
 
@@ -75,6 +78,9 @@ public class ExamClipperGUI extends JFrame {
       super(WINDOW_TITLE);
       
       lPages = new ArrayList<>();
+      
+      // JFPanel - Used for initializing javafx thread
+      new JFXPanel();
       
       initComponents();
    }
@@ -329,31 +335,35 @@ public class ExamClipperGUI extends JFrame {
    }
 
    private void showOpenPDFDialog() {
-      FileNameExtensionFilter filter = new FileNameExtensionFilter("PDFs Files (*.pdf)", "pdf");
-      
-      fileChooser = new JFileChooser();
-      fileChooser.setCurrentDirectory(selectedFile != null ? selectedFile : new File("C:\\Users\\Marlon Leoner\\Downloads\\"));
-      fileChooser.setFileFilter(filter);
-      
-      int result = fileChooser.showOpenDialog(this);
-      if(result == JFileChooser.APPROVE_OPTION) {        
-         File file = fileChooser.getSelectedFile();
-         System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
-         SwingUtilities.invokeLater(() -> loadPDF(file));
-      }
+      Platform.runLater(() -> {
+         FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+
+         fileChooser = new FileChooser();
+         fileChooser.setTitle("Open PDF");
+         fileChooser.setInitialDirectory(selectedFile != null ? selectedFile : new File(System.getProperty("user.home")));
+         fileChooser.getExtensionFilters().add(extentionFilter);
+
+         File file = fileChooser.showOpenDialog(null);
+         if(file != null) {
+            System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
+            SwingUtilities.invokeLater(() -> loadPDF(file));
+         }
+      });
    }
    
-    private void showSaveCroppingsDialog() {
-      fileChooser.setCurrentDirectory(selectedFile);
-      fileChooser.setName("Save Croppings");
-      fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
-      int result = fileChooser.showOpenDialog(this);
-      if(result == JFileChooser.APPROVE_OPTION) {        
-         File file = fileChooser.getSelectedFile();
-         System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
-         SwingUtilities.invokeLater(() -> saveClippings(file));
-      }
-    }
+   private void showSaveCroppingsDialog() {
+      Platform.runLater(() -> {
+         directoryChooser = new DirectoryChooser();
+         directoryChooser.setTitle("Save Clippings");
+         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+         File file = directoryChooser.showDialog(null);
+         if(file != null) {
+            System.out.println(" > [ExamClipperGUI] Selected File: " + file.getName());
+            SwingUtilities.invokeLater(() -> saveClippings(file));
+         }
+      });
+   }
    
    private void loadPDF(File file) {
       try {
@@ -463,8 +473,8 @@ public class ExamClipperGUI extends JFrame {
    public void attFilesList() {
       DefaultListModel<Page> listModel = new DefaultListModel<>();
 
-      for(Page page : lPages) {
-         listModel.addElement(page);
+      for(Page p : lPages) {
+         listModel.addElement(p);
       }
 
       pagesList.setModel(listModel);
@@ -489,7 +499,8 @@ public class ExamClipperGUI extends JFrame {
    private JMenuItem loadButton;
    private JMenuItem exitButton;
    
-   private JFileChooser fileChooser; 
+   private FileChooser      fileChooser;
+   private DirectoryChooser directoryChooser;
    
    private JProgressBar progressBar;
    

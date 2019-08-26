@@ -70,7 +70,7 @@ public class ClipFinder extends Thread {
       Imgproc.findContours(gray, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
       // Iterate all contours
-      System.out.println(" > [OpenCVController] " + contours.size() + " contours founded!");
+      System.out.println(" > [OpenCVController] " + contours.size() + " contours found!");
       for(MatOfPoint mop : contours) {
          Rect rect = Imgproc.boundingRect(mop);
 

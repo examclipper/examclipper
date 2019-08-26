@@ -408,7 +408,7 @@ public class ExamClipperGUI extends JFrame {
       this.lPages = lPages;
       attFilesList();
       
-      System.out.println(" > [ExamClipperGUI] Total pages founded: " + lPages.size());
+      System.out.println(" > [ExamClipperGUI] Numbers of pages found: " + lPages.size());
       mPagePanel.setPage(lPages.get(0));
 
       previewPanel.removeAll();

@@ -351,7 +351,7 @@ public class ExamClipperGUI extends JFrame {
       });
    }
    
-   private void showSaveCroppingsDialog() {
+   private void showSaveClippingsDialog() {
       Platform.runLater(() -> {
          directoryChooser = new DirectoryChooser();
          directoryChooser.setTitle("Save Clippings");
@@ -387,15 +387,15 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void findClippings() {
-      ClipFinder cropFinder = new ClipFinder(page, hSizeSlider.getValue(), vSizeSlider.getValue());
-      cropFinder.start();
+      ClipFinder clipFinder = new ClipFinder(page, hSizeSlider.getValue(), vSizeSlider.getValue());
+      clipFinder.start();
 
-      while(cropFinder.isAlive()) {
+      while(clipFinder.isAlive()) {
          // Wait
       }
       
       extractClippings.setEnabled(true);
-      mPagePanel.deleteToSmallRectangles();
+      mPagePanel.deleteToSmallClippings();
       mPagePanel.repaint();
    }
    
@@ -435,17 +435,17 @@ public class ExamClipperGUI extends JFrame {
    }          
    
    private void deleteSelectedClippingsActionPerformed(ActionEvent evt) {                                                        
-      mPagePanel.deleteSelectedRectangles();
+      mPagePanel.deleteSelectedClippings();
    }                                                       
 
    private void mergeSelectedClippingsButtonActionPerformed(ActionEvent evt) {                                                             
       System.out.println(" > [ExamClipperGUI] Merging selected clippings...");
-      mPagePanel.mergeSelectedRectangles();
+      mPagePanel.mergeSelectedClippings();
    }                                                            
 
    private void extractClippingsActionPerformed(ActionEvent evt) {                                                 
       System.out.println(" > [ExamClipperGUI] Extracting clippings...");
-      showSaveCroppingsDialog();
+      showSaveClippingsDialog();
    }                                                
 
    private void typeClippingsComboBoxItemStateChanged(ItemEvent evt) {                                                       

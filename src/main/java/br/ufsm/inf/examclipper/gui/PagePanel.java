@@ -33,9 +33,9 @@ public class PagePanel extends JPanel {
    // Current Page
    private Page page;
    
-   private Clip crop;
-   private Point         auxPoint;
-   private Point         auxCornerPoint;
+   private Clip  clip;
+   private Point auxPoint;
+   private Point auxCornerPoint;
    
    public PagePanel(ExamClipperGUI gui) {
       this(gui, null);
@@ -47,7 +47,7 @@ public class PagePanel extends JPanel {
       this.gui  = gui;
       this.page = page;
       
-      crop     = null;
+      clip     = null;
       auxPoint = auxCornerPoint = null;
       
       setSettings();
@@ -91,12 +91,12 @@ public class PagePanel extends JPanel {
       if(page != null) {
          g2.drawImage(page.getBufferedImage(), null, 0, 0);
          
-         if(crop != null) {
-            drawCropRectangle(g2, crop);
+         if(clip != null) {
+            drawClipRegion(g2, clip);
          }
          
          for (Clip rect : page.getClippings()) {
-            drawCropRectangle(g2, rect);
+            drawClipRegion(g2, rect);
             if (rect.isSelected()) {
                drawSelectionOverlay(g2, rect);
             }
@@ -106,7 +106,7 @@ public class PagePanel extends JPanel {
       g2.dispose();
    }
 
-   private void drawCropRectangle(Graphics2D g2, Clip rect) {
+   private void drawClipRegion(Graphics2D g2, Clip rect) {
       Color color = Color.BLACK;
       String type = "Nenhum";
       switch(rect.getType()) {
@@ -138,31 +138,31 @@ public class PagePanel extends JPanel {
       g2.setStroke(oldStroke);
    }
    
-   private void drawSelectionOverlay(Graphics2D g2, Clip rect) {
+   private void drawSelectionOverlay(Graphics2D g2, Clip clip) {
       g2.setComposite(XOR_COMPOSITE);
       g2.setColor(Color.BLACK);
       g2.setStroke(SELECTED_STROKE);
-      g2.drawRect(rect.x + SELECT_BORDER_WIDTH / 2, rect.y + SELECT_BORDER_WIDTH / 2, rect.width - SELECT_BORDER_WIDTH / 2, rect.height - SELECT_BORDER_WIDTH / 2);
+      g2.drawRect(clip.x + SELECT_BORDER_WIDTH / 2, clip.y + SELECT_BORDER_WIDTH / 2, clip.width - SELECT_BORDER_WIDTH / 2, clip.height - SELECT_BORDER_WIDTH / 2);
 
       // Rect size in pixels
-      String size = Integer.toString(rect.width) + "x" + Integer.toString(rect.height);
-      // g2.setFont(scaleFont(size, crop));
+      String size = Integer.toString(clip.width) + "x" + Integer.toString(clip.height);
+      // g2.setFont(scaleFont(size, clip));
       g2.setComposite(FULL_COMPOSITE);
       g2.setColor(Color.BLACK);
-      g2.drawString(size, rect.x + NORMAL_BORDER_WIDTH, rect.y + rect.height - NORMAL_BORDER_WIDTH);
+      g2.drawString(size, clip.x + NORMAL_BORDER_WIDTH, clip.y + clip.height - NORMAL_BORDER_WIDTH);
             
       // Corners
       g2.setColor(Color.RED);
       int corner = Clip.CORNER_DIMENSION;
-      int x = rect.x - (corner / 2);
-      int y = rect.y - (corner / 2);
+      int x = clip.x - (corner / 2);
+      int y = clip.y - (corner / 2);
       g2.fillRect(x,              y,               corner, corner);
-      g2.fillRect(x,              y + rect.height, corner, corner);
-      g2.fillRect(x + rect.width, y,               corner, corner);
-      g2.fillRect(x + rect.width, y + rect.height, corner, corner);
+      g2.fillRect(x,              y + clip.height, corner, corner);
+      g2.fillRect(x + clip.width, y,               corner, corner);
+      g2.fillRect(x + clip.width, y + clip.height, corner, corner);
    }
    
-   public void deleteToSmallRectangles() {
+   public void deleteToSmallClippings() {
       List<Clip> rectsToTrash = new ArrayList<>();
       for(Clip rect : page.getClippings()) {
          if(rect.getWidth()  < 2 * Clip.CORNER_DIMENSION ||
@@ -173,7 +173,7 @@ public class PagePanel extends JPanel {
       page.removeCleppings(rectsToTrash);
   }
    
-   public void deleteSelectedRectangles() {
+   public void deleteSelectedClippings() {
       List<Clip> removeList = new ArrayList<>();
       for(Clip rect : page.getClippings()) {
          if (rect.isSelected()) {
@@ -184,13 +184,13 @@ public class PagePanel extends JPanel {
       repaint();
    }
    
-   private void diselectAllRectangles() {
+   private void diselectAllClippings() {
       for(Clip rect : page.getClippings()) {
          rect.setSelected(false);
       }
    }
    
-   private int getNumbersOfSelectedRectangles() {
+   private int getNumbersOfSelectedClippings() {
       int numbersOfSelecteds = 0;
       for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
@@ -200,7 +200,7 @@ public class PagePanel extends JPanel {
       return numbersOfSelecteds;
    }
    
-   private int getFirstSelectedRectangles() {
+   private int getFirstSelectedClipping() {
       for(Clip rect : page.getClippings()) {
          if(rect.isSelected()) {
             return rect.getType();
@@ -209,7 +209,7 @@ public class PagePanel extends JPanel {
       return 0;
    }
 
-   public void mergeSelectedRectangles() {
+   public void mergeSelectedClippings() {
       int minX = Integer.MAX_VALUE;
       int minY = Integer.MAX_VALUE;
       int maxX = Integer.MIN_VALUE;
@@ -228,7 +228,7 @@ public class PagePanel extends JPanel {
             if(y1 > maxY) maxY = y1;   
          }
       }
-      deleteSelectedRectangles();
+      deleteSelectedClippings();
       page.addClipping(new Clip(minX, minY, maxX - minX, maxY - minY));
    }
    
@@ -248,7 +248,7 @@ public class PagePanel extends JPanel {
          int keyCode = event.getKeyCode();
          switch(keyCode) {
             case KeyEvent.VK_DELETE:
-               deleteSelectedRectangles();
+               deleteSelectedClippings();
                break;
          }
       }
@@ -310,11 +310,11 @@ public class PagePanel extends JPanel {
                         break;
                   }
                   action = cornerClicked + 3;
-                  diselectAllRectangles();
+                  diselectAllClippings();
                   if(!rect.isSelected()) {
                      rect.setSelected(true);  
                   }
-                  crop = rect;
+                  clip = rect;
                   return;
                }
             }
@@ -323,25 +323,25 @@ public class PagePanel extends JPanel {
                if (rect.contains(point)) {
                   action = MOVE_RECT;
                   if(!mouseEvent.isControlDown()) {
-                     diselectAllRectangles();
+                     diselectAllClippings();
                   }
                   if(!rect.isSelected()) {
                      rect.setSelected(true);  
-                     gui.attRectanglePanelGUI(getNumbersOfSelectedRectangles(), getFirstSelectedRectangles());
+                     gui.attRectanglePanelGUI(getNumbersOfSelectedClippings(), getFirstSelectedClipping());
                   }
-                  crop = rect;
+                  clip = rect;
                   return;
                }
             }
             
             // Draw new Rect
             action = NEW_RECT;
-            if(crop == null) {
-               diselectAllRectangles();
-               gui.attRectanglePanelGUI(getNumbersOfSelectedRectangles(), getFirstSelectedRectangles());
-               crop = new Clip();
-               crop.setSelected(true);
-               page.addClipping(crop);
+            if(clip == null) {
+               diselectAllClippings();
+               gui.attRectanglePanelGUI(getNumbersOfSelectedClippings(), getFirstSelectedClipping());
+               clip = new Clip();
+               clip.setSelected(true);
+               page.addClipping(clip);
                auxPoint = point;
             }
          }
@@ -352,10 +352,10 @@ public class PagePanel extends JPanel {
          Point point = mouseEvent.getPoint();
          
          action   = NOTHING;
-         crop     = null;
+         clip     = null;
          auxPoint = null;
          
-         deleteToSmallRectangles();
+         deleteToSmallClippings();
          repaint();
       }
 
@@ -369,33 +369,33 @@ public class PagePanel extends JPanel {
             case NOTHING:
                break;
             case NEW_RECT:
-               crop.x = (point.x < auxPoint.x) ? point.x : auxPoint.x;
-               crop.y = (point.y < auxPoint.y) ? point.y : auxPoint.y;
-               crop.width  = Math.abs(point.x - auxPoint.x);
-               crop.height = Math.abs(point.y - auxPoint.y);
+               clip.x = (point.x < auxPoint.x) ? point.x : auxPoint.x;
+               clip.y = (point.y < auxPoint.y) ? point.y : auxPoint.y;
+               clip.width  = Math.abs(point.x - auxPoint.x);
+               clip.height = Math.abs(point.y - auxPoint.y);
                break;
             case MOVE_RECT:
-               crop.translate(point.x - auxPoint.x, point.y - auxPoint.y);
+               clip.translate(point.x - auxPoint.x, point.y - auxPoint.y);
                auxPoint = point;
                break;
             case MOVE_ULC:
                point.translate(auxCornerPoint.x, auxCornerPoint.y);
-               crop.setNewULCorner(point);
+               clip.setNewULCorner(point);
                auxPoint = point;
                break;
             case MOVE_URC:
                point.translate(auxCornerPoint.x, auxCornerPoint.y);
-               crop.setNewURCorner(point);
+               clip.setNewURCorner(point);
                auxPoint = point;
                break;
             case MOVE_LLC:
                point.translate(auxCornerPoint.x, auxCornerPoint.y);
-               crop.setNewLLCorner(point);
+               clip.setNewLLCorner(point);
                auxPoint = point;
                break;
             case MOVE_LRC:
                point.translate(auxCornerPoint.x, auxCornerPoint.y);
-               crop.setNewLRCorner(point);
+               clip.setNewLRCorner(point);
                auxPoint = point;
                break;
          }

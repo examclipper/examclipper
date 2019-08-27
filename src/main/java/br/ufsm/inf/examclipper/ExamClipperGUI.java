@@ -170,9 +170,7 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void setHomePanel() {
-      ImageIcon icon = new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource("ic_pdf.png")).getImage().getScaledInstance(15, 20, Image.SCALE_SMOOTH));
-      ImageIcon logo = new ImageIcon(getClass().getClassLoader().getResource("ic_logo_200.png"));
-      homePanel = new HomePanel(icon, logo, actionListener -> showOpenPDFDialog());
+      homePanel = new HomePanel(this);
    }
    
    private void setPagesListPanel() {     
@@ -338,7 +336,7 @@ public class ExamClipperGUI extends JFrame {
       setLocation(wScreen / 2 - DEFAULT_WIDTH / 2, hScreen / 2 - DEFAULT_HEIGHT / 2);
    }
 
-   private void showOpenPDFDialog() {
+   public void showOpenPDFDialog() {
       Platform.runLater(() -> {
          FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
 

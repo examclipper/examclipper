@@ -61,10 +61,10 @@ import javafx.stage.FileChooser;
 
 public class ExamClipperGUI extends JFrame {
 
-   private static final String WINDOW_TITLE = "[ExamClipper]"; 
+   private static final String WINDOW_TITLE = "Welcome to [ExamClipper]"; 
            
-   private static final int DEFAULT_WIDTH  = 800;
-   private static final int DEFAULT_HEIGHT = 600;
+   private static final int DEFAULT_WIDTH  = 670;
+   private static final int DEFAULT_HEIGHT = 490;
    private static final int MIN_WIDTH      = 400;
    private static final int MIN_HEIGHT     = 300;
 
@@ -109,14 +109,14 @@ public class ExamClipperGUI extends JFrame {
       ////
 
       setWindowConfigs();
-      pack();
-
       setDefaultCloseOperation(EXIT_ON_CLOSE);
+      setResizable(false);
+      pack();
    }
 
    private void setLookAndFeel() {
       try {
-         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());         
+         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
       catch(Exception e) {
          System.out.println(" > [ExamClipperGUI] Error to set LookAndFeel: " + e);
@@ -125,30 +125,33 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void setMenuBar() {
-      // Create the file sub-menu bar.
+      ImageIcon icNewProject  = new ImageIcon(getClass().getClassLoader().getResource("ic_folder_plus_solid_16.png"));
+      ImageIcon icOpenProject = new ImageIcon(getClass().getClassLoader().getResource("ic_folder_solid_16.png"));
+      
+      JMenuItem newProject = new JMenuItem("New Project", icNewProject);
+      newProject.setMnemonic(KeyEvent.VK_N);
+      newProject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+      newProject.getAccessibleContext().setAccessibleDescription("Button to create a new project");
+      
+      JMenuItem openProject = new JMenuItem("Open Project", icOpenProject);
+      openProject.setMnemonic(KeyEvent.VK_O);
+      openProject.getAccessibleContext().setAccessibleDescription("Button to open an exist project");
+      
+      JMenuItem exitButton = new JMenuItem("Exit", KeyEvent.VK_E);
+      exitButton.addActionListener(actionListener -> System.exit(0));
+      
       JMenu fileMenu = new JMenu("File");
       fileMenu.setMnemonic(KeyEvent.VK_F);
-      
-      loadButton = new JMenuItem(("Load PDF"), KeyEvent.VK_L);
-      loadButton.setEnabled(true);
-      loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
-      loadButton.addActionListener(actionListener -> showOpenPDFDialog());
-
-      exitButton = new JMenuItem("Exit", KeyEvent.VK_E);
-      exitButton.addActionListener(actionListener -> System.exit(0));
-
-      fileMenu.add(loadButton);
+      fileMenu.getAccessibleContext().setAccessibleDescription("File Menu");
+      fileMenu.add(newProject);
+      fileMenu.add(openProject);
       fileMenu.addSeparator();
       fileMenu.add(exitButton);
 
-      JMenu helpMenu = new JMenu("Help");
-      helpMenu.setMnemonic(KeyEvent.VK_H);
-      
       menuBar = new JMenuBar();
       menuBar.setVisible(false);
       menuBar.add(fileMenu);
-      menuBar.add(helpMenu);
-      
+
       setJMenuBar(menuBar);
    }
 
@@ -168,7 +171,8 @@ public class ExamClipperGUI extends JFrame {
    
    private void setHomePanel() {
       ImageIcon icon = new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource("ic_pdf.png")).getImage().getScaledInstance(15, 20, Image.SCALE_SMOOTH));
-      homePanel = new HomePanel(icon, actionListener -> showOpenPDFDialog());
+      ImageIcon logo = new ImageIcon(getClass().getClassLoader().getResource("ic_logo_200.png"));
+      homePanel = new HomePanel(icon, logo, actionListener -> showOpenPDFDialog());
    }
    
    private void setPagesListPanel() {     
@@ -421,10 +425,11 @@ public class ExamClipperGUI extends JFrame {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       
       pack();
-      setExtendedState(Frame.MAXIMIZED_BOTH);
       menuBar.setVisible(true);
       cardLayout.first(wrapperPanel);
       mPagePanel.repaint();
+      setResizable(true);
+      setExtendedState(Frame.MAXIMIZED_BOTH);
       repaint();
    }
    
@@ -495,9 +500,7 @@ public class ExamClipperGUI extends JFrame {
    }
    
    //####################################
-   private JMenuBar  menuBar;
-   private JMenuItem loadButton;
-   private JMenuItem exitButton;
+   private JMenuBar menuBar;
    
    private FileChooser      fileChooser;
    private DirectoryChooser directoryChooser;

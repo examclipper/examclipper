@@ -332,7 +332,7 @@ public class PagePanel extends JPanel {
                   }
                   if(!rect.isSelected()) {
                      rect.setSelected(true);  
-                     gui.attRectanglePanelGUI(getNumbersOfSelectedClippings(), getFirstSelectedClipping());
+                     gui.attRectanglePanelGUI(page.getNumbersOfClippings(), getNumbersOfSelectedClippings(), getFirstSelectedClipping());
                   }
                   clip = rect;
                   return;
@@ -343,7 +343,7 @@ public class PagePanel extends JPanel {
             action = NEW_RECT;
             if(clip == null) {
                diselectAllClippings();
-               gui.attRectanglePanelGUI(getNumbersOfSelectedClippings(), getFirstSelectedClipping());
+               gui.attRectanglePanelGUI(page.getNumbersOfClippings()+1, getNumbersOfSelectedClippings(), getFirstSelectedClipping());
                clip = new Clip();
                clip.setSelected(true);
                page.addClipping(clip);

@@ -24,15 +24,12 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -49,10 +46,12 @@ import javax.swing.JList;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.LayoutStyle;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.border.EmptyBorder;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.application.Platform;
@@ -209,120 +208,115 @@ public class ExamClipperGUI extends JFrame {
    }
    
    private void setButtonsPanel() {
-      buttonsPanel = new JPanel();
+      Dimension dimension = new Dimension(200, 40);
       
       hSizeLabel  = new JLabel("Horizontal");
+      hSizeLabel.setAlignmentX(CENTER_ALIGNMENT);
+      hSizeLabel.setMinimumSize(dimension);
+      hSizeLabel.setMaximumSize(dimension);
+      
       hSizeSlider = new JSlider(1, 30, 5);
+      hSizeSlider.setAlignmentX(CENTER_ALIGNMENT);
+      hSizeSlider.setMinimumSize(dimension);
+      hSizeSlider.setMaximumSize(dimension);
 
       vSizeLabel  = new JLabel("Vertical");
+      vSizeLabel.setAlignmentX(CENTER_ALIGNMENT);
+      vSizeLabel.setMinimumSize(dimension);
+      vSizeLabel.setMaximumSize(dimension);
+      
       vSizeSlider = new JSlider(1, 30, 5);
-
-      findClippingsButton = new JButton();
-      findClippingsButton.setText("Aplicar");
-      findClippingsButton.setEnabled(false);
+      vSizeSlider.setAlignmentX(CENTER_ALIGNMENT);
+      vSizeSlider.setMinimumSize(dimension);
+      vSizeSlider.setMaximumSize(dimension);
+      
+      findClippingsButton = new JButton("Aplicar");
+      findClippingsButton.setAlignmentX(CENTER_ALIGNMENT);
+      findClippingsButton.setBorder(new EmptyBorder(15, 0, 15, 0));
+      findClippingsButton.setMinimumSize(dimension);
+      findClippingsButton.setMaximumSize(dimension);
       findClippingsButton.addActionListener(event -> findClippingsButtonActionPerformed(event));
-
-      sliderPanel = new JPanel();
-      sliderPanel.setBorder(BorderFactory.createTitledBorder("Sliders"));
-
-      GroupLayout sliderPanelLayout = new GroupLayout(sliderPanel);
-      sliderPanelLayout.setHorizontalGroup(
-         sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(hSizeLabel,          GroupLayout.DEFAULT_SIZE,   170,                      Short.MAX_VALUE)
-         .addComponent(hSizeSlider,         GroupLayout.PREFERRED_SIZE, 0,                        Short.MAX_VALUE)
-         .addComponent(vSizeLabel,          GroupLayout.DEFAULT_SIZE,   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-         .addComponent(vSizeSlider,         GroupLayout.PREFERRED_SIZE, 0,                        Short.MAX_VALUE)
-         .addComponent(findClippingsButton, GroupLayout.DEFAULT_SIZE,   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-      );
-      sliderPanelLayout.setVerticalGroup(
-         sliderPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-         .addGroup(sliderPanelLayout.createSequentialGroup()
-            .addComponent(hSizeLabel)
-            .addGap(0, 0, 0)
-            .addComponent(hSizeSlider,         GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addGap(0, 0, 0)
-            .addComponent(vSizeLabel)
-            .addGap(0, 0, 0)
-            .addComponent(vSizeSlider,         GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(findClippingsButton, GroupLayout.PREFERRED_SIZE, 30,                       GroupLayout.PREFERRED_SIZE))
-      );
-      sliderPanel.setLayout(sliderPanelLayout);      
-
+      findClippingsButton.setEnabled(false);
+      
+      // Sliders Panel
+      JPanel sPanel = new JPanel();
+      sPanel.setLayout(new BoxLayout(sPanel, BoxLayout.Y_AXIS));
+      sPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+      sPanel.add(hSizeLabel);
+      sPanel.add(hSizeSlider);
+      sPanel.add(vSizeLabel);
+      sPanel.add(vSizeSlider);
+      sPanel.add(Box.createVerticalStrut(10));
+      sPanel.add(findClippingsButton);
+      
+      EmptyBorder buttonsBorder = new EmptyBorder(5, 5, 5, 5);
+      
       typeClippingsLabel = new JLabel("Tipo");
+      typeClippingsLabel.setAlignmentX(CENTER_ALIGNMENT);
+      typeClippingsLabel.setBorder(buttonsBorder);
+      typeClippingsLabel.setMinimumSize(dimension);
+      typeClippingsLabel.setMaximumSize(dimension);
 
       typeClippingsComboBox = new JComboBox<>();
+      typeClippingsComboBox.setAlignmentX(CENTER_ALIGNMENT);
+      typeClippingsComboBox.setBorder(buttonsBorder);
+      typeClippingsComboBox.setMinimumSize(dimension);
+      typeClippingsComboBox.setMaximumSize(dimension);
       typeClippingsComboBox.setModel(new DefaultComboBoxModel<>(new String[] { "Nenhum", "Enunciado", "Imagem", "Alternativa" }));
-      typeClippingsComboBox.setEnabled(false);
       typeClippingsComboBox.addItemListener(event -> typeClippingsComboBoxItemStateChanged(event));
+      typeClippingsComboBox.setEnabled(false);
 
-      mergeSelectedClippingsButton = new JButton();
-      mergeSelectedClippingsButton.setText("Mesclar");
-      mergeSelectedClippingsButton.setEnabled(false);
+      mergeSelectedClippingsButton = new JButton("Mesclar");
+      mergeSelectedClippingsButton.setAlignmentX(CENTER_ALIGNMENT);
+      mergeSelectedClippingsButton.setBorder(buttonsBorder);
+      mergeSelectedClippingsButton.setMinimumSize(dimension);
+      mergeSelectedClippingsButton.setMaximumSize(dimension);
       mergeSelectedClippingsButton.addActionListener(event -> mergeSelectedClippingsButtonActionPerformed(event));
+      mergeSelectedClippingsButton.setEnabled(false);
 
-      extractClippings = new JButton();
-      extractClippings.setText("Recortar");
-      extractClippings.setEnabled(false);
+      extractClippings = new JButton("Recortar");
+      extractClippings.setAlignmentX(CENTER_ALIGNMENT);
+      extractClippings.setBorder(buttonsBorder);
+      extractClippings.setMinimumSize(dimension);
+      extractClippings.setMaximumSize(dimension);
       extractClippings.addActionListener(event -> extractClippingsActionPerformed(event));
+      extractClippings.setEnabled(false);
 
-      deleteSelectedClippings = new JButton();
-      deleteSelectedClippings.setText("Deletar");
-      deleteSelectedClippings.setEnabled(false);
+      deleteSelectedClippings = new JButton("Deletar");
+      deleteSelectedClippings.setAlignmentX(CENTER_ALIGNMENT);
+      deleteSelectedClippings.setBorder(buttonsBorder);
+      deleteSelectedClippings.setMinimumSize(dimension);
+      deleteSelectedClippings.setMaximumSize(dimension);
       deleteSelectedClippings.addActionListener(event -> deleteSelectedClippingsActionPerformed(event));
+      deleteSelectedClippings.setEnabled(false);
       
-      clippingsPanel = new JPanel();
-      clippingsPanel.setBorder(BorderFactory.createTitledBorder("Recortes"));
+      deleteAllClippings = new JButton("Limpar");
+      deleteAllClippings.setAlignmentX(CENTER_ALIGNMENT);
+      deleteAllClippings.setBorder(buttonsBorder);
+      deleteAllClippings.setMinimumSize(dimension);
+      deleteAllClippings.setMaximumSize(dimension);
+      deleteAllClippings.addActionListener(event -> deleteAllClippingsActionPerformed(event));
+      deleteAllClippings.setEnabled(false);
       
-      GroupLayout clippingsPanelLayout = new GroupLayout(clippingsPanel);
-      clippingsPanelLayout.setHorizontalGroup(
-         clippingsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-         .addComponent(typeClippingsLabel,           GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-         .addComponent(typeClippingsComboBox,        0,                        170,                      Short.MAX_VALUE)
-         .addComponent(mergeSelectedClippingsButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-         .addComponent(extractClippings,             GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-         .addComponent(deleteSelectedClippings,      GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-      );
-      clippingsPanelLayout.setVerticalGroup(
-         clippingsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-         .addGroup(clippingsPanelLayout.createSequentialGroup()
-            .addComponent(typeClippingsLabel)
-            .addGap(0, 0, 0)
-            .addComponent(typeClippingsComboBox,        GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-            .addGap(18, 18, 18)
-            .addComponent(deleteSelectedClippings,      GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(mergeSelectedClippingsButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(extractClippings,             GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-      );
-      clippingsPanel.setLayout(clippingsPanelLayout);
+      // Clipping Panel
+      JPanel cPanel = new JPanel();
+      cPanel.setLayout(new BoxLayout(cPanel, BoxLayout.Y_AXIS));
+      cPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+      cPanel.add(typeClippingsLabel);
+      cPanel.add(typeClippingsComboBox);
+      cPanel.add(Box.createVerticalStrut(25));
+      cPanel.add(mergeSelectedClippingsButton);
+      cPanel.add(deleteSelectedClippings);
+      cPanel.add(deleteAllClippings);
+      cPanel.add(Box.createVerticalStrut(25));
+      cPanel.add(extractClippings);
 
-      buttonsPanel = new JPanel();
+      buttonsPanel = new JPanel(new BorderLayout());
+      buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
       buttonsPanel.setBackground(Color.WHITE);
-      buttonsPanel.setBorder(BorderFactory.createTitledBorder("Configurações"));
       buttonsPanel.setPreferredSize(new Dimension(200, panel.getHeight()));
-      
-      GroupLayout buttonsPanelLayout = new GroupLayout(buttonsPanel);
-      buttonsPanelLayout.setHorizontalGroup(
-         buttonsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-         .addGroup(buttonsPanelLayout.createSequentialGroup()
-            .addContainerGap()
-            .addGroup(buttonsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-               .addComponent(sliderPanel,    GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-               .addComponent(clippingsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap())
-      );
-      buttonsPanelLayout.setVerticalGroup(
-         buttonsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-         .addGroup(buttonsPanelLayout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(sliderPanel,    GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(clippingsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-      );
-      buttonsPanel.setLayout(buttonsPanelLayout);
+      buttonsPanel.add(sPanel, BorderLayout.NORTH);
+      buttonsPanel.add(cPanel, BorderLayout.SOUTH);
    }
    
    private void setWindowConfigs() {
@@ -435,12 +429,18 @@ public class ExamClipperGUI extends JFrame {
    private void findClippingsButtonActionPerformed(ActionEvent evt) {                                                    
       System.out.println(" > [ExamClipperGUI] Finding clippings...");
       findClippings();
+      deleteAllClippings.setEnabled(true);
    }          
    
    private void deleteSelectedClippingsActionPerformed(ActionEvent evt) {                                                        
       mPagePanel.deleteSelectedClippings();
-   }                                                       
+   }
 
+   private void deleteAllClippingsActionPerformed(ActionEvent evt) {                                                        
+      mPagePanel.deleteAllClippings();
+      deleteAllClippings.setEnabled(false);
+   }
+   
    private void mergeSelectedClippingsButtonActionPerformed(ActionEvent evt) {                                                             
       System.out.println(" > [ExamClipperGUI] Merging selected clippings...");
       mPagePanel.mergeSelectedClippings();
@@ -465,6 +465,7 @@ public class ExamClipperGUI extends JFrame {
       findClippingsButton.setEnabled(true);
       typeClippingsComboBox.setEnabled(false);
       mergeSelectedClippingsButton.setEnabled(false);
+      deleteAllClippings.setEnabled(true);
       list.ensureIndexIsVisible(selectedIndex);
       loadImage(selectedIndex);
       if(page.getNumbersOfClippings()== 0) {
@@ -484,11 +485,12 @@ public class ExamClipperGUI extends JFrame {
       pagesList.setCellRenderer(new PageItemList());
    }
 
-   public void attRectanglePanelGUI(int sizeSelectedRect, int type) {
-      typeClippingsComboBox.setEnabled(sizeSelectedRect == 1);
+   public void attRectanglePanelGUI(int totalClipping, int sizeSelectedClipping, int type) {
+      typeClippingsComboBox.setEnabled(sizeSelectedClipping == 1);
       typeClippingsComboBox.setSelectedIndex(type);
-      mergeSelectedClippingsButton.setEnabled(sizeSelectedRect > 1);
-      deleteSelectedClippings.setEnabled(sizeSelectedRect > 1);
+      mergeSelectedClippingsButton.setEnabled(sizeSelectedClipping > 1);
+      deleteSelectedClippings.setEnabled(sizeSelectedClipping > 1);
+      deleteAllClippings.setEnabled(totalClipping > 1);
    }
    
    private void loadImage(int index) {
@@ -519,12 +521,11 @@ public class ExamClipperGUI extends JFrame {
    private JPanel      previewPanel;
    
    private JPanel  buttonsPanel;
-   private JPanel  clippingsPanel;
    private JButton deleteSelectedClippings;
+   private JButton deleteAllClippings;
    private JButton extractClippings;
    private JButton findClippingsButton;
    private JButton mergeSelectedClippingsButton;
-   private JPanel  sliderPanel;
    private JLabel  hSizeLabel;
    private JLabel  vSizeLabel;
    private JSlider hSizeSlider;

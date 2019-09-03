@@ -27,8 +27,8 @@ public class ClipExtractor {
          Mat  image = page.getImage();
          System.out.print("\t > [OpenCVController] Page [" + (i + 1) + "] " + page.getFilename());
          
-         String folderPath = path + File.separator + "page-" + (i + 1) + File.separator;  
-         verifyPath(folderPath);
+         // String folderPath = path + File.separator + "page-" + (i + 1) + File.separator;  
+         // verifyPath(folderPath);
 
          List<Clip> lClippings  = sortList(page.getClippings());
          int numbersOfClippings = lClippings.size();
@@ -40,7 +40,7 @@ public class ClipExtractor {
             Rect ocvRect  = new Rect(r.x, r.y, r.width, r.height);
             Mat  clipping = new Mat(image.clone(), ocvRect);
             
-            String filePath = folderPath + (j + 1);
+            String filePath = path + File.separator + "page_" + (i + 1) + "_item_" + (j + 1);
             switch(r.getType()) {
                case Clip.NOTHING_TYPE:
                   filePath += "_nenhum";

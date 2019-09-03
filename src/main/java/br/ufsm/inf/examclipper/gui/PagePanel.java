@@ -184,6 +184,11 @@ public class PagePanel extends JPanel {
       repaint();
    }
    
+   public void deleteAllClippings() {
+      page.removeAllClippings();
+      repaint();
+   }
+   
    private void diselectAllClippings() {
       for(Clip rect : page.getClippings()) {
          rect.setSelected(false);

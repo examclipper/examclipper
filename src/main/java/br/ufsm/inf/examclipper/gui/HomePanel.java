@@ -35,7 +35,7 @@ public class HomePanel extends JPanel {
       
       setLayout(new GridLayout(2, 1));
 
-      Dimension size = new Dimension(200, 40);
+      Dimension size = new Dimension(220, 40);
       EmptyBorder border = new EmptyBorder(10, 20, 10, 20);
 
       JLabel logoLabel = new JLabel(icLogo);

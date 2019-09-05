@@ -468,9 +468,10 @@ public class ExamClipperGUI extends JFrame {
       deleteAllClippings.setEnabled(true);
       list.ensureIndexIsVisible(selectedIndex);
       loadImage(selectedIndex);
-      if(page.getNumbersOfClippings()== 0) {
-         findClippings();
-      }
+      // Do not find clippings before the user asks us to do so
+      //if(page.getNumbersOfClippings()== 0) {
+      //   findClippings();
+      //}
    }
    
    // Methods

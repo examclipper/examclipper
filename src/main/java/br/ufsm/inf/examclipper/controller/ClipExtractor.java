@@ -67,7 +67,13 @@ public class ClipExtractor {
 
    private List<Clip> sortList(List<Clip> lClippings) {
       Collections.sort(lClippings, (rect1, rect2) -> {         
-         return rect1.y - rect2.y;
+         System.out.println("(" + rect1.x + "," + rect1.y + ") (" + rect2.x + "," + rect2.y + ")");
+         //return rect1.y - rect2.y; // comparator for single column pages
+         if ((rect1.x - rect2.x) > (rect1.y - rect2.y))
+            return rect1.x - rect2.x;
+         else
+            return rect1.y - rect2.y;
+         
       });
            
       return lClippings;

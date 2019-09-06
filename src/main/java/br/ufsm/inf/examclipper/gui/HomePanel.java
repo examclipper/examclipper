@@ -66,6 +66,7 @@ public class HomePanel extends JPanel {
          
          public void mouseClicked(MouseEvent me) {
             // TODO
+            gui.showNewProjectDialog();
          }
       });
 

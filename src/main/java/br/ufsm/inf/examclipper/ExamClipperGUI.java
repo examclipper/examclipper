@@ -7,6 +7,7 @@ import br.ufsm.inf.examclipper.gui.PageItemList;
 import br.ufsm.inf.examclipper.controller.ClipFinder;
 import br.ufsm.inf.examclipper.controller.PDFConversor;
 import br.ufsm.inf.examclipper.controller.ClipExtractor;
+import br.ufsm.inf.examclipper.gui.NewProjectDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -330,6 +331,11 @@ public class ExamClipperGUI extends JFrame {
       setLocation(wScreen / 2 - DEFAULT_WIDTH / 2, hScreen / 2 - DEFAULT_HEIGHT / 2);
    }
 
+   public void showNewProjectDialog() {
+      NewProjectDialog dialog = new NewProjectDialog(this);
+      dialog.run();
+   }
+   
    public void showOpenPDFDialog() {
       Platform.runLater(() -> {
          FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");

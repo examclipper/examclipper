@@ -255,6 +255,9 @@ public class PagePanel extends JPanel {
             case KeyEvent.VK_DELETE:
                deleteSelectedClippings();
                break;
+            case KeyEvent.VK_M:
+               mergeSelectedClippings();
+               break;
          }
       }
 

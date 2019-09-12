@@ -1,6 +1,8 @@
 package br.ufsm.inf.examclipper.gui;
 
-import java.awt.AWTEventMulticaster;
+import br.ufsm.inf.examclipper.model.Project;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -16,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
@@ -24,15 +25,12 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 
-import java.util.List;
-import java.util.ArrayList;
-
 public class NewProjectDialog extends JDialog implements ActionListener {
 
    private static final int DEFAULT_WIDTH  = 670;
    private static final int DEFAULT_HEIGHT = 490;
 
-   private List<String> data;
+   private Project project;
 
    private File selectedFile;
    private File selectedFolder;
@@ -40,7 +38,7 @@ public class NewProjectDialog extends JDialog implements ActionListener {
    public NewProjectDialog(Frame parent) {
       super(parent, "New Project", true);
 
-      data           = new ArrayList<>();
+      project        = null;
       selectedFile   = null;
       selectedFolder = new File(System.getProperty("user.home"));
 
@@ -95,8 +93,16 @@ public class NewProjectDialog extends JDialog implements ActionListener {
 
          @Override
          public void keyReleased(KeyEvent e) {
-            String strProject = projectNameInput.getText().replaceAll("\\s+", "");
-            projectFolderInput.setText(selectedFolder.getAbsolutePath() + File.separator + strProject);
+            String projectName = projectNameInput.getText();
+            if(!projectName.isEmpty()) {
+               projectName = projectName.replaceAll("\\s+", "");
+               File file = new File(selectedFolder.getAbsolutePath() + File.separator + projectName);
+
+               projectFolderInput.setText(file.getAbsolutePath());
+
+               attCreateProjectButton();
+               verifyProjectFolder(file);
+            }            
          }
       });
 
@@ -126,6 +132,7 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       projectFolderInput.setBounds(10, 180, 650, 30);
       
       createProjectButton = new JButton("Criar");
+      createProjectButton.setEnabled(false);
       createProjectButton.setFont(font);
       createProjectButton.addActionListener(this);
       createProjectButton.setBounds(410, 450, 120, 30);
@@ -135,6 +142,14 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       cancelProjectButton.addActionListener(this);
       cancelProjectButton.setBounds(540, 450, 120, 30);
 
+      ImageIcon icWarning = new ImageIcon(getClass().getClassLoader().getResource("ic_warning_16.png"));
+      errorLabel = new JLabel("A pasta do projeto já existe e não está vazia!");
+      errorLabel.setVisible(false);
+      errorLabel.setFont(font);
+      errorLabel.setForeground(Color.RED);
+      errorLabel.setIcon(icWarning);
+      errorLabel.setBounds(10, 210, 650, 30);
+      
       panel.add(projectNameLabel);
       panel.add(projectFileLabel);
       panel.add(projectLocationLabel);
@@ -145,6 +160,7 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       panel.add(projectFolderInput);
       panel.add(findFileProjectButton);
       panel.add(findFolderProjectButton);
+      panel.add(errorLabel);
       panel.add(createProjectButton);
       panel.add(cancelProjectButton);
 
@@ -157,10 +173,18 @@ public class NewProjectDialog extends JDialog implements ActionListener {
    public void actionPerformed(ActionEvent e) {
       Object source = e.getSource();
       if (source == createProjectButton) {
+         String projectName = projectNameInput.getText();
+         
+         project = new Project();
+         project.setName(projectName);
+         project.setPdf(selectedFile);
+         project.setLocation(selectedFolder);
+         project.setFolder(projectName.replaceAll("\\s+", ""));
+                  
          dispose();
       }
       else if(source == cancelProjectButton) {
-         data = null;
+         project = null;
          dispose();
       }
       else if(source == findFileProjectButton) {
@@ -171,10 +195,10 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       }
    }
 
-   public List<String> run() {
+   public Project run() {
       this.setVisible(true);
 
-      return data;
+      return project;
    }
 
    private JTextField projectNameInput;
@@ -187,6 +211,8 @@ public class NewProjectDialog extends JDialog implements ActionListener {
 
    private JButton createProjectButton;
    private JButton cancelProjectButton;
+   
+   private JLabel errorLabel;
 
    private void showOpenPDFDialog() {
       Platform.runLater(() -> {
@@ -199,7 +225,14 @@ public class NewProjectDialog extends JDialog implements ActionListener {
 
          selectedFile = fileChooser.showOpenDialog(null);
          if(selectedFile != null) {
+            String projectName = projectNameInput.getText().replaceAll("\\s+", "");
+            File file = new File(selectedFolder.getAbsolutePath() + File.separator + projectName);
+
             projectFileInput.setText(selectedFile.getAbsolutePath());
+            projectFolderInput.setText(file.getAbsolutePath());
+
+            attCreateProjectButton();
+            verifyProjectFolder(file);
          }
       });
    }
@@ -216,5 +249,28 @@ public class NewProjectDialog extends JDialog implements ActionListener {
             projectFolderInput.setText(selectedFolder.getAbsolutePath() + File.separator + projectNameInput.getText());
          }
       });
+   }
+   
+   private void attCreateProjectButton() {
+      boolean isNameProjectEmpty = projectNameInput.getText().isEmpty();
+      boolean isFileProjectEmpty = projectFileInput.getText().isEmpty();
+      
+      createProjectButton.setEnabled(!isNameProjectEmpty && !isFileProjectEmpty);
+   }
+   
+   private void verifyProjectFolder(File folder) {
+      String[] files = folder.list();
+      if(files != null) {
+         if(files.length > 0) {
+            errorLabel.setVisible(true);
+            createProjectButton.setEnabled(false);
+         }
+         else {
+            errorLabel.setVisible(false);
+         }
+      }
+      else {
+         errorLabel.setVisible(false);
+      }
    }
 }

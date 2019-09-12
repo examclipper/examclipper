@@ -4,7 +4,6 @@ import br.ufsm.inf.examclipper.ExamClipperGUI;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -14,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 
 public class HomePanel extends JPanel {

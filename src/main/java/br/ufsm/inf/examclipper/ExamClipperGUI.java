@@ -7,7 +7,9 @@ import br.ufsm.inf.examclipper.gui.PageItemList;
 import br.ufsm.inf.examclipper.controller.ClipFinder;
 import br.ufsm.inf.examclipper.controller.PDFConversor;
 import br.ufsm.inf.examclipper.controller.ClipExtractor;
+import br.ufsm.inf.examclipper.controller.ProjectCreator;
 import br.ufsm.inf.examclipper.gui.NewProjectDialog;
+import br.ufsm.inf.examclipper.model.Project;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -70,14 +73,14 @@ public class ExamClipperGUI extends JFrame {
 
    private File selectedFile;
    
-   private List<Page> lPages;
+   private Project project;
    
    private Page page;
    
    public ExamClipperGUI() {
       super(WINDOW_TITLE);
       
-      lPages = new ArrayList<>();
+      project = new Project();
       
       // JFPanel - Used for initializing javafx thread
       new JFXPanel();
@@ -95,13 +98,25 @@ public class ExamClipperGUI extends JFrame {
       setMainPanel();
       
       /////
+      Dimension dimension = new Dimension(400, 100);
+      
       progressBar = new JProgressBar(0, 100);
+      progressBar.setAlignmentX(CENTER_ALIGNMENT);
+      progressBar.setMaximumSize(dimension);
+      progressBar.setMinimumSize(dimension);
       progressBar.setStringPainted(true);
-      progressBar.setPreferredSize(new Dimension(400, 30));
       progressBar.setVisible(false);
-
+      
+      progressBarLabel = new JLabel();
+      progressBarLabel.setAlignmentX(CENTER_ALIGNMENT);
+      progressBarLabel.setMaximumSize(dimension);
+      progressBarLabel.setMinimumSize(dimension);
+      progressBarLabel.setFont(font);
+      
       footerPanel = new JPanel();
-      footerPanel.setBackground(Color.WHITE);
+      footerPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+      footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
+      footerPanel.add(progressBarLabel);
       footerPanel.add(progressBar);
       
       add(wrapperPanel, BorderLayout.CENTER);
@@ -333,7 +348,11 @@ public class ExamClipperGUI extends JFrame {
 
    public void showNewProjectDialog() {
       NewProjectDialog dialog = new NewProjectDialog(this);
-      dialog.run();
+
+      project = dialog.run();
+      if(project != null) {
+         SwingUtilities.invokeLater(() -> createNewProject());
+      }
    }
    
    public void showOpenPDFDialog() {
@@ -367,10 +386,21 @@ public class ExamClipperGUI extends JFrame {
       });
    }
    
+   private void createNewProject() {
+      progressBarLabel.setText("Criando Projeto...");
+      progressBar.setVisible(true);
+      
+      File file = project.getPdf();
+      if(file != null) {
+         System.out.println(" > [ExamClipperGUI] Converting before project creation: " + file.getName());
+         SwingUtilities.invokeLater(() -> loadPDF(file));
+      }
+   }
+   
    private void loadPDF(File file) {
       try {
          convertPDF(file);
-         setTitle(WINDOW_TITLE + " - " + selectedFile.getName());
+         setTitle("[ExamClipper] - " + selectedFile.getName());
       }
       catch(Exception e) {
           JOptionPane.showMessageDialog(this, e.getMessage(), "Mensagem de Erro", JOptionPane.ERROR_MESSAGE);
@@ -381,8 +411,8 @@ public class ExamClipperGUI extends JFrame {
       // Remember last PDF opened
       selectedFile = pdf;
       
+      progressBarLabel.setText("Carregando e Convertendo PDF...");
       progressBar.setVisible(true);
-      progressBar.setString("Loading and Converting PDF...");
       
       LoadPagesTask lpt = new LoadPagesTask(pdf);
       lpt.execute();
@@ -403,11 +433,20 @@ public class ExamClipperGUI extends JFrame {
    
    private void saveClippings(File folder) {
       ClipExtractor opcv = new ClipExtractor();
-      opcv.extractClippings(folder.getAbsolutePath(), lPages);
+      opcv.extractClippings(folder.getAbsolutePath(), project.getPages());
    }
    
    private void setStateAfterConvertionFinished(List<Page> lPages) {
-      this.lPages = lPages;
+      project.setPages(lPages);
+      
+      CreateProjectTask cpt = new CreateProjectTask(project);
+      cpt.execute();
+   }
+   
+   private void setStateAfterProjectCreationFinished(Project project) {
+      this.project = project;
+      List<Page> lPages = project.getPages();
+      
       attFilesList();
       
       System.out.println(" > [ExamClipperGUI] Numbers of pages found: " + lPages.size());
@@ -484,7 +523,7 @@ public class ExamClipperGUI extends JFrame {
    public void attFilesList() {
       DefaultListModel<Page> listModel = new DefaultListModel<>();
 
-      for(Page p : lPages) {
+      for(Page p : project.getPages()) {
          listModel.addElement(p);
       }
 
@@ -500,20 +539,23 @@ public class ExamClipperGUI extends JFrame {
       deleteAllClippings.setEnabled(totalClipping > 1);
    }
    
-   private void loadImage(int index) {
-      page = lPages.get(index);
+   private void loadImage(int index) {      
+      page = project.getPages().get(index);
       mPagePanel.setPage(page);
       System.out.println(" > [ExamClipperGUI] " + page.getFilename() + " loaded");
    }
    
    //####################################
+   private Font font = new Font("Meiryo", Font.PLAIN, 12);
+   
    private JMenuBar menuBar;
    
    private FileChooser      fileChooser;
    private DirectoryChooser directoryChooser;
    
+   private JLabel       progressBarLabel;
    private JProgressBar progressBar;
-   
+      
    private JPanel panel;
    
    private JPanel homePanel;
@@ -571,12 +613,13 @@ public class ExamClipperGUI extends JFrame {
             int page    = conversor.currentPage;           
             int percent = (int) ((page / (float) numberOfPages) * 100);
             progressBar.setValue(percent);
-            progressBar.setString("(" + page + "/" + numberOfPages + ") Loading and Converting PDF...");
+            progressBar.setString(percent + " %");
+            // progressBar.setString("(" + page + "/" + numberOfPages + ") Loading and Converting PDF...");
             try {
                 Thread.sleep(50);
             }
             catch (InterruptedException e) {
-               System.out.println(" > [Conversor] Error on while");
+               System.out.println(" > [LoadPagesTask] Error on while");
             }
          }
          return null;
@@ -585,6 +628,45 @@ public class ExamClipperGUI extends JFrame {
       @Override
       protected void done() {
          setStateAfterConvertionFinished(lPages);
+      }
+   }
+   
+   private class CreateProjectTask extends SwingWorker<Void, Void> {
+
+      private final Project project;
+      
+      public CreateProjectTask(Project project) {
+         this.project = project;
+      }
+      
+      @Override
+      protected Void doInBackground() throws Exception {
+         
+         ProjectCreator pc = new ProjectCreator(this.project);
+         pc.start();
+         
+         int numbersOfSteps = pc.numbersOfSteps;
+         
+         while(pc.isAlive()) {
+            int step    = pc.currentStep;           
+            int percent = (int) ((step / (float) numbersOfSteps) * 100);
+            progressBar.setValue(percent);
+            progressBar.setString(percent + " %");
+            //progressBar.setString("(" + step + "/" + numbersOfSteps + ") Creating Project...");
+            try {
+                Thread.sleep(50);
+            }
+            catch (InterruptedException e) {
+               System.out.println(" > [CreateProjectTask] Error on while");
+            }
+         }
+         
+         return null;
+      }
+      
+      @Override
+      protected void done() {
+         setStateAfterProjectCreationFinished(project);
       }
    }
 }

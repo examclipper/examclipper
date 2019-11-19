@@ -11,9 +11,9 @@ public class Project {
    private File pdf;
    // Location
    private File location;
-   // Folder inside location
-   private String folder;
-   // 
+   // Project File
+   private String file;
+   // List w/ Pages
    private List<Page> lPages;
    
    public Project() {
@@ -28,11 +28,11 @@ public class Project {
       this.name = name;
    }
 
-   public File getPdf() {
+   public File getPDF() {
       return pdf;
    }
 
-   public void setPdf(File pdf) {
+   public void setPDF(File pdf) {
       this.pdf = pdf;
    }
 
@@ -44,12 +44,12 @@ public class Project {
       this.location = location;
    }
 
-   public String getFolder() {
-      return folder;
+   public File getFile() {
+      return new File(getLocation() + File.separator + file);
    }
 
-   public void setFolder(String folder) {
-      this.folder = folder;
+   public void setFile(String file) {
+      this.file = file;
    }
 
    public List<Page> getPages() {
@@ -60,8 +60,12 @@ public class Project {
       this.lPages = lPages;
    }
 
+   public String getPDFFolder() {
+      return getLocation() + File.separator + "pdf" + File.separator;
+   }
+   
    @Override
    public String toString() {
-      return "Project {" + "\n\tName: " + name + "\n\tPDF: " + pdf + "\n\tLocation: " + location + File.separator + folder + "\n}";
+      return "Project {" + "\n\tName: " + name + "\n\tPDF: " + pdf + "\n\tLocation: " + location + "\n}";
    }
 }

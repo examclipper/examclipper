@@ -177,9 +177,8 @@ public class NewProjectDialog extends JDialog implements ActionListener {
          
          project = new Project();
          project.setName(projectName);
-         project.setPdf(selectedFile);
-         project.setLocation(selectedFolder);
-         project.setFolder(projectName.replaceAll("\\s+", ""));
+         project.setPDF(selectedFile);
+         project.setLocation(new File(selectedFolder + File.separator + projectName.replaceAll("\\s+", "")));
                   
          dispose();
       }

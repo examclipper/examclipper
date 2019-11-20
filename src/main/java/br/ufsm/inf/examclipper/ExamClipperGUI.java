@@ -7,7 +7,9 @@ import br.ufsm.inf.examclipper.gui.PageItemList;
 import br.ufsm.inf.examclipper.controller.ClipFinder;
 import br.ufsm.inf.examclipper.controller.PDFConversor;
 import br.ufsm.inf.examclipper.controller.ClipExtractor;
+import br.ufsm.inf.examclipper.controller.OpenProject;
 import br.ufsm.inf.examclipper.controller.ProjectCreator;
+import br.ufsm.inf.examclipper.controller.SaveProject;
 import br.ufsm.inf.examclipper.gui.NewProjectDialog;
 import br.ufsm.inf.examclipper.model.Project;
 
@@ -80,7 +82,7 @@ public class ExamClipperGUI extends JFrame {
    public ExamClipperGUI() {
       super(WINDOW_TITLE);
       
-      project = new Project();
+      project = null; 
       
       // JFPanel - Used for initializing javafx thread
       new JFXPanel();
@@ -155,12 +157,17 @@ public class ExamClipperGUI extends JFrame {
       JMenuItem exitButton = new JMenuItem("Exit", KeyEvent.VK_E);
       exitButton.addActionListener(actionListener -> System.exit(0));
       
+      JMenuItem saveProjectButton = new JMenuItem("Save Project", KeyEvent.VK_S); 
+      saveProjectButton.addActionListener(actionListener -> saveProject());
+      
       JMenu fileMenu = new JMenu("File");
       fileMenu.setMnemonic(KeyEvent.VK_F);
       fileMenu.getAccessibleContext().setAccessibleDescription("File Menu");
       fileMenu.add(newProject);
       fileMenu.add(openProject);
       fileMenu.addSeparator();
+      fileMenu.add(saveProjectButton); 
+      fileMenu.addSeparator(); 
       fileMenu.add(exitButton);
 
       menuBar = new JMenuBar();
@@ -355,6 +362,23 @@ public class ExamClipperGUI extends JFrame {
       }
    }
    
+   public void showOpenProjectDialog() { 
+      Platform.runLater(() -> { 
+         FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("ExamClipper files (*.examclipper-project)", "*.examclipper-project"); 
+ 
+         fileChooser = new FileChooser(); 
+         fileChooser.setTitle("Open Project"); 
+         fileChooser.setInitialDirectory(project != null ? project.getLocation(): new File(System.getProperty("user.home"))); 
+         fileChooser.getExtensionFilters().add(extentionFilter); 
+ 
+         File file = fileChooser.showOpenDialog(null); 
+         if(file != null) { 
+            System.out.println(" > [ExamClipperGUI] Open Project File: " + file.getAbsolutePath()); 
+            SwingUtilities.invokeLater(() -> loadProject(file)); 
+         } 
+      }); 
+   } 
+   
    public void showOpenPDFDialog() {
       Platform.runLater(() -> {
          FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
@@ -390,17 +414,35 @@ public class ExamClipperGUI extends JFrame {
       progressBarLabel.setText("Criando Projeto...");
       progressBar.setVisible(true);
       
-      File file = project.getPdf();
+      File file = project.getPDF();
       if(file != null) {
          System.out.println(" > [ExamClipperGUI] Converting before project creation: " + file.getName());
          SwingUtilities.invokeLater(() -> loadPDF(file));
       }
    }
    
+   private void loadProject(File file) { 
+      progressBarLabel.setText("Abrindo Projeto..."); 
+      progressBar.setVisible(true); 
+          
+      OpenProjectTask opt = new OpenProjectTask(file); 
+      opt.execute(); 
+   } 
+    
+   private void saveProject() { 
+      System.out.println(" > [ExamClipperGUI] Saving project ..."); 
+ 
+      progressBarLabel.setText("Salvando Projeto..."); 
+      progressBarLabel.setVisible(true); 
+      progressBar.setVisible(true); 
+ 
+      SaveProjectTask spt = new SaveProjectTask(project); 
+      spt.execute(); 
+   } 
+   
    private void loadPDF(File file) {
       try {
          convertPDF(file);
-         setTitle("[ExamClipper] - " + selectedFile.getName());
       }
       catch(Exception e) {
           JOptionPane.showMessageDialog(this, e.getMessage(), "Mensagem de Erro", JOptionPane.ERROR_MESSAGE);
@@ -465,10 +507,42 @@ public class ExamClipperGUI extends JFrame {
       menuBar.setVisible(true);
       cardLayout.first(wrapperPanel);
       mPagePanel.repaint();
+      setTitle(project.getName() + " [" + project.getLocation().getAbsolutePath() + "] - ExamClipper"); 
       setResizable(true);
       setExtendedState(Frame.MAXIMIZED_BOTH);
       repaint();
    }
+   
+   private void setStateAfterOpeningProjectFinished(Project project) { 
+      this.project = project; 
+      List<Page> lPages = project.getPages(); 
+       
+      attFilesList(); 
+       
+      System.out.println(" > [ExamClipperGUI] Numbers of pages found: " + lPages.size()); 
+      mPagePanel.setPage(lPages.get(0)); 
+ 
+      previewPanel.removeAll(); 
+      previewPanel.add(mPagePanel); 
+ 
+      progressBarLabel.setVisible(false); 
+      progressBar.setVisible(false); 
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)); 
+       
+      pack(); 
+      menuBar.setVisible(true); 
+      cardLayout.first(wrapperPanel); 
+      mPagePanel.repaint(); 
+      setTitle(project.getName() + " [" + project.getLocation().getAbsolutePath() + "] - ExamClipper"); 
+      setResizable(true); 
+      setExtendedState(Frame.MAXIMIZED_BOTH); 
+      repaint(); 
+   } 
+    
+   private void setStateAfterSavingProjectFinished() { 
+      progressBarLabel.setVisible(false); 
+      progressBar.setVisible(false); 
+   } 
    
    // Events
    private void findClippingsButtonActionPerformed(ActionEvent evt) {                                                    
@@ -614,7 +688,6 @@ public class ExamClipperGUI extends JFrame {
             int percent = (int) ((page / (float) numberOfPages) * 100);
             progressBar.setValue(percent);
             progressBar.setString(percent + " %");
-            // progressBar.setString("(" + page + "/" + numberOfPages + ") Loading and Converting PDF...");
             try {
                 Thread.sleep(50);
             }
@@ -669,4 +742,85 @@ public class ExamClipperGUI extends JFrame {
          setStateAfterProjectCreationFinished(project);
       }
    }
+   
+   private class OpenProjectTask extends SwingWorker<Void, Void> { 
+ 
+      private Project project; 
+       
+      private File file; 
+       
+      public OpenProjectTask(File file) { 
+         this.file = file; 
+      } 
+             
+      @Override 
+      protected Void doInBackground() throws Exception { 
+          
+         OpenProject op = new OpenProject(this.file); 
+         op.start(); 
+          
+         int numbersOfSteps = op.numbersOfSteps; 
+          
+         while(op.isAlive()) { 
+            int step = op.currentStep; 
+            if(step == 2) numbersOfSteps = op.numbersOfSteps; 
+            int percent = (int) ((step / (float) numbersOfSteps) * 100); 
+            progressBar.setValue(percent); 
+            progressBar.setString(percent + " %"); 
+            try { 
+                Thread.sleep(50); 
+            } 
+            catch (InterruptedException e) { 
+               System.out.println(" > [CreateProjectTask] Error on while"); 
+            } 
+         } 
+          
+         project = op.getProject();          
+         return null; 
+      } 
+       
+      @Override 
+      protected void done() { 
+         setStateAfterOpeningProjectFinished(project); 
+      } 
+   } 
+    
+   private class SaveProjectTask extends SwingWorker<Void, Void> { 
+ 
+      private Project project; 
+       
+      public SaveProjectTask(Project project) { 
+         this.project = project; 
+      } 
+             
+      @Override 
+      protected Void doInBackground() throws Exception { 
+          
+         SaveProject sp = new SaveProject(project); 
+         sp.start(); 
+          
+         int numbersOfSteps = sp.numbersOfSteps; 
+          
+         while(sp.isAlive()) { 
+            int step = sp.currentStep; 
+            if(step == 1) numbersOfSteps = sp.numbersOfSteps; 
+            int percent = (int) ((step / (float) numbersOfSteps) * 100); 
+            progressBar.setValue(percent); 
+            progressBar.setString(percent + " %"); 
+            try { 
+                Thread.sleep(50); 
+            } 
+            catch (InterruptedException e) { 
+               System.out.println(" > [CreateProjectTask] Error on while"); 
+            } 
+         } 
+            
+         return null; 
+      } 
+       
+      @Override 
+      protected void done() { 
+         setStateAfterSavingProjectFinished(); 
+      } 
+   } 
 }

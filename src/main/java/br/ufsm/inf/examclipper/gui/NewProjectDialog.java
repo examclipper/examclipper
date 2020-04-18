@@ -108,14 +108,13 @@ public class NewProjectDialog extends JDialog implements ActionListener {
          @Override
          public void keyReleased(KeyEvent e) {
             String projectName = projectNameInput.getText();
+            projectName = projectName.replaceAll("\\s+", "");
+            String filePath = selectedFolder.getAbsolutePath() + File.separator + projectName;
+            projectFolderInput.setText(filePath);
+
+            attCreateProjectButton();
             if (!projectName.isEmpty()) {
-               projectName = projectName.replaceAll("\\s+", "");
-               File file = new File(selectedFolder.getAbsolutePath() + File.separator + projectName);
-
-               projectFolderInput.setText(file.getAbsolutePath());
-
-               attCreateProjectButton();
-               verifyProjectFolder(file);
+               verifyProjectFolder(filePath);
             }
          }
       });
@@ -160,7 +159,7 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       cancelProjectButton.setBounds(540, DEFAULT_HEIGHT - BUTTON_HEIGHT - 10, BUTTON_WIDTH, BUTTON_HEIGHT);
 
       ImageIcon icWarning = new ImageIcon(getClass().getClassLoader().getResource("ic_warning_16.png"));
-      errorLabel = new JLabel("A pasta do projeto já existe e não está vazia!");
+      errorLabel = new JLabel("A pasta escolhida para o projeto já existe e não está vazia!");
       errorLabel.setVisible(false);
       errorLabel.setFont(font);
       errorLabel.setForeground(Color.RED);
@@ -239,13 +238,13 @@ public class NewProjectDialog extends JDialog implements ActionListener {
          selectedFile = fileChooser.showOpenDialog(null);
          if (selectedFile != null) {
             String projectName = projectNameInput.getText().replaceAll("\\s+", "");
-            File file = new File(selectedFolder.getAbsolutePath() + File.separator + projectName);
+            String filePath = selectedFolder.getAbsolutePath() + File.separator + projectName;
 
             projectFileInput.setText(selectedFile.getAbsolutePath());
-            projectFolderInput.setText(file.getAbsolutePath());
+            projectFolderInput.setText(filePath);
 
             attCreateProjectButton();
-            verifyProjectFolder(file);
+            verifyProjectFolder(filePath);
          }
       });
    }
@@ -271,7 +270,9 @@ public class NewProjectDialog extends JDialog implements ActionListener {
       createProjectButton.setEnabled(!isNameProjectEmpty && !isFileProjectEmpty);
    }
 
-   private void verifyProjectFolder(File folder) {
+   private void verifyProjectFolder(String folderPath) {
+      File folder = new File(folderPath);
+
       String[] files = folder.list();
       if (files != null) {
          if (files.length > 0) {

@@ -26,11 +26,11 @@ public class HomePanel extends JPanel {
    }
 
    private void initComponents() {
-      ImageIcon icLogo        = new ImageIcon(getClass().getClassLoader().getResource("ic_logo_200.png"));
-      ImageIcon icNewProject  = new ImageIcon(getClass().getClassLoader().getResource("ic_folder_plus_solid_16.png"));
+      ImageIcon icLogo = new ImageIcon(getClass().getClassLoader().getResource("ic_logo_200.png"));
+      ImageIcon icNewProject = new ImageIcon(getClass().getClassLoader().getResource("ic_folder_plus_solid_16.png"));
       ImageIcon icOpenProject = new ImageIcon(getClass().getClassLoader().getResource("ic_folder_solid_16.png"));
-      ImageIcon icOpenPDF     = new ImageIcon(getClass().getClassLoader().getResource("ic_pdf_16.png"));
-      
+      ImageIcon icOpenPDF = new ImageIcon(getClass().getClassLoader().getResource("ic_pdf_16.png"));
+
       setLayout(new GridLayout(2, 1));
 
       Dimension size = new Dimension(220, 40);
@@ -42,6 +42,8 @@ public class HomePanel extends JPanel {
       JLabel newProject = new JLabel("  Criar um novo projeto");
       newProject.setAlignmentX(CENTER_ALIGNMENT);
       newProject.setBorder(border);
+      newProject.setBackground(Color.WHITE);
+      newProject.setForeground(Color.BLACK);
       newProject.setMaximumSize(size);
       newProject.setMinimumSize(size);
       newProject.setIcon(icNewProject);
@@ -61,7 +63,7 @@ public class HomePanel extends JPanel {
             newProject.setBackground(oldBgColor);
             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
          }
-         
+
          public void mouseClicked(MouseEvent me) {
             gui.showNewProjectDialog();
          }
@@ -70,6 +72,8 @@ public class HomePanel extends JPanel {
       JLabel openProject = new JLabel("  Abrir um projeto");
       openProject.setAlignmentX(CENTER_ALIGNMENT);
       openProject.setBorder(border);
+      openProject.setBackground(Color.WHITE);
+      openProject.setForeground(Color.BLACK);
       openProject.setMaximumSize(size);
       openProject.setMinimumSize(size);
       openProject.setIcon(icOpenProject);
@@ -89,15 +93,17 @@ public class HomePanel extends JPanel {
             openProject.setBackground(oldBgColor);
             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
          }
-         
+
          public void mouseClicked(MouseEvent me) {
-            gui.showOpenProjectDialog(); 
+            gui.showOpenProjectDialog();
          }
       });
 
       JLabel openPDF = new JLabel("  Abrir um PDF");
       openPDF.setAlignmentX(CENTER_ALIGNMENT);
       openPDF.setBorder(border);
+      openPDF.setBackground(Color.WHITE);
+      openPDF.setForeground(Color.BLACK);
       openPDF.setMaximumSize(size);
       openPDF.setMinimumSize(size);
       openPDF.setIcon(icOpenPDF);
@@ -117,7 +123,7 @@ public class HomePanel extends JPanel {
             openPDF.setBackground(oldBgColor);
             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
          }
-         
+
          public void mouseClicked(MouseEvent me) {
             gui.showOpenPDFDialog();
          }
@@ -125,11 +131,14 @@ public class HomePanel extends JPanel {
 
       JPanel buttonsPanel = new JPanel();
       buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+      buttonsPanel.setBackground(Color.WHITE);
       buttonsPanel.add(newProject);
       buttonsPanel.add(openProject);
       buttonsPanel.add(openPDF);
 
       add(logoLabel);
       add(buttonsPanel);
+
+      setBackground(Color.WHITE);
    }
 }

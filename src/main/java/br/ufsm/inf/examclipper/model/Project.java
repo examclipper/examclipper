@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Project {
+
    // Project Name
    private String name;
    // PDF File
@@ -15,11 +16,11 @@ public class Project {
    private String file;
    // List w/ Pages
    private List<Page> lPages;
-   
+
    public Project() {
       lPages = new ArrayList<>();
    }
-   
+
    public String getName() {
       return name;
    }
@@ -63,7 +64,7 @@ public class Project {
    public String getPDFFolder() {
       return getLocation() + File.separator + "pdf" + File.separator;
    }
-   
+
    @Override
    public String toString() {
       return "Project {" + "\n\tName: " + name + "\n\tPDF: " + pdf + "\n\tLocation: " + location + "\n}";

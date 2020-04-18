@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import org.opencv.core.Mat;
 
 public class Page {
+
    // File Name
    private String filename;
    // Path
@@ -26,11 +27,11 @@ public class Page {
    }
 
    public Page(String filename, String path) {
-      this.filename   = filename;
-      this.path       = path;
-      this.image      = null;
-      this.modified   = null;
-      this.buffImage  = null;
+      this.filename = filename;
+      this.path = path;
+      this.image = null;
+      this.modified = null;
+      this.buffImage = null;
       this.lClippings = new ArrayList<>();
    }
 

@@ -26,7 +26,7 @@ public class ProjectCreator extends Thread {
    public ProjectCreator(Project project) {
       this.project = project;
 
-      currentStep    = 0;
+      currentStep = 0;
       numbersOfSteps = 4;
    }
 
@@ -60,8 +60,8 @@ public class ProjectCreator extends Thread {
 
    private void movePDFFile() {
       verifyFolder(project.getPDFFolder());
-      
-      File source      = project.getPDF();
+
+      File source = project.getPDF();
       File destination = new File(project.getPDFFolder() + source.getName());
       try {
          Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -82,10 +82,10 @@ public class ProjectCreator extends Thread {
       // Project File
       JSONObject pf = new JSONObject();
 
-      pf.put("ProjectName",      project.getName());
-      pf.put("ProjectLocation",  project.getLocation().getAbsolutePath());
-      pf.put("PDF",              project.getPDF().getName());
-      pf.put("Pages",            pages);
+      pf.put("ProjectName", project.getName());
+      pf.put("ProjectLocation", project.getLocation().getAbsolutePath());
+      pf.put("PDF", project.getPDF().getName());
+      pf.put("Pages", pages);
 
       return pf;
    }
@@ -93,13 +93,12 @@ public class ProjectCreator extends Thread {
    private void createProjectConfigFile(JSONObject json) {
       String path = project.getLocation().getAbsolutePath();
       String file = project.getName().toLowerCase().replaceAll("\\s+", "");
-            
+
       try {
          FileWriter fw = new FileWriter(path + File.separator + file + ".examclipper-project");
          fw.write(json.toJSONString());
          fw.close();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
          System.out.println(" > [ProjectCreator] Error to create project file.");
       }
    }

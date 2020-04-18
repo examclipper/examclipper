@@ -23,7 +23,7 @@ public class SaveProject extends Thread {
    public SaveProject(Project project) {
       this.project = project;
 
-      currentStep    = 0;
+      currentStep = 0;
       numbersOfSteps = 2;
    }
 
@@ -44,7 +44,7 @@ public class SaveProject extends Thread {
       List<Page> lPages = project.getPages();
 
       numbersOfSteps += lPages.size();
-      
+
       JSONArray pages = new JSONArray();
       for (int i = 0; i < lPages.size(); i++) {
          List<Clip> clippings = lPages.get(i).getClippings();
@@ -68,10 +68,10 @@ public class SaveProject extends Thread {
       // Project File
       JSONObject pf = new JSONObject();
 
-      pf.put("ProjectName",      project.getName());
-      pf.put("ProjectLocation",  project.getLocation().getAbsolutePath());
-      pf.put("PDF",              project.getPDF().getName());
-      pf.put("Pages",            pages);
+      pf.put("ProjectName", project.getName());
+      pf.put("ProjectLocation", project.getLocation().getAbsolutePath());
+      pf.put("PDF", project.getPDF().getName());
+      pf.put("Pages", pages);
 
       return pf;
    }
@@ -79,13 +79,12 @@ public class SaveProject extends Thread {
    private void saveJSON(JSONObject json) {
       String path = project.getLocation().getAbsolutePath();
       String file = project.getName().toLowerCase().replaceAll("\\s+", "");
-            
+
       try {
          FileWriter fw = new FileWriter(path + File.separator + file + ".examclipper-project");
          fw.write(json.toJSONString());
          fw.close();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
          System.out.println(" > [ProjectCreator] Error to create project file.");
       }
    }

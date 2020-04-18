@@ -17,13 +17,13 @@ import org.opencv.imgproc.Imgproc;
 public class ClipFinder extends Thread {
 
    private final Page page;
-   private final int  horizontalSize;
-   private final int  verticalSize;
+   private final int horizontalSize;
+   private final int verticalSize;
 
    public ClipFinder(Page page, int horizontalSize, int verticalSize) {
-      this.page           = page;
+      this.page = page;
       this.horizontalSize = horizontalSize;
-      this.verticalSize   = verticalSize;
+      this.verticalSize = verticalSize;
    }
 
    @Override
@@ -35,7 +35,7 @@ public class ClipFinder extends Thread {
       Mat image = page.getImage().clone();
       // Gray Image
       Mat gray = new Mat(image.size(), CvType.CV_8UC1);
-      switch(image.channels()) {
+      switch (image.channels()) {
          case 3:
             Imgproc.cvtColor(image, gray, Imgproc.COLOR_RGB2GRAY);
             break;
@@ -47,14 +47,14 @@ public class ClipFinder extends Thread {
             break;
       }
 
-      // Threshold 
+      // Threshold
       Imgproc.threshold(gray, gray, 127, 255, Imgproc.THRESH_BINARY);
 
       // Element -> Rectangle
       int elementType = Imgproc.CV_SHAPE_RECT;
       // Size
       Size size = new Size(2 * horizontalSize + 1, 2 * verticalSize + 1);
-      // Point 
+      // Point
       Point point = new Point(horizontalSize, verticalSize);
       // Element
       Mat element = Imgproc.getStructuringElement(elementType, size, point);
@@ -71,10 +71,10 @@ public class ClipFinder extends Thread {
 
       // Iterate all contours
       System.out.println(" > [OpenCVController] " + contours.size() + " contours found!");
-      for(MatOfPoint mop : contours) {
+      for (MatOfPoint mop : contours) {
          Rect rect = Imgproc.boundingRect(mop);
 
-         if((rect.width * rect.height > 2500) && (rect.width != image.cols()) && (rect.height != image.rows())) {
+         if ((rect.width * rect.height > 2500) && (rect.width != image.cols()) && (rect.height != image.rows())) {
             page.addClipping(new Clip(rect.x, rect.y, rect.width, rect.height));
          }
       }

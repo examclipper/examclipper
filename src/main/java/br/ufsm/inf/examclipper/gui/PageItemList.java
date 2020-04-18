@@ -18,7 +18,7 @@ import javax.swing.border.EmptyBorder;
 public class PageItemList extends JPanel implements ListCellRenderer<Page> {
 
    private static final int HORIZONTAL_PADDING = 7;
-   private static final int VERTICAL_PADDING   = 5;
+   private static final int VERTICAL_PADDING = 5;
 
    private JPanel panel;
    private JLabel pageNumberLabel;
@@ -38,10 +38,10 @@ public class PageItemList extends JPanel implements ListCellRenderer<Page> {
       pageNumberLabel.setFont(new Font("Meiryo", Font.BOLD, 14));
       pageNumberLabel.setHorizontalAlignment(SwingConstants.CENTER);
       pageNumberLabel.setVerticalAlignment(SwingConstants.TOP);
-      
+
       imagePanel = new ImagePageItemList();
 
-      panel.add(imagePanel,      BorderLayout.CENTER);
+      panel.add(imagePanel, BorderLayout.CENTER);
       panel.add(pageNumberLabel, BorderLayout.WEST);
 
       setBackground(Color.LIGHT_GRAY);
@@ -49,7 +49,7 @@ public class PageItemList extends JPanel implements ListCellRenderer<Page> {
    }
 
    public void setDimensions() {
-      int width  = getWidth();
+      int width = getWidth();
       int height = getHeight();
 
       pageNumberLabel.setPreferredSize(new Dimension(30, height));
@@ -58,9 +58,9 @@ public class PageItemList extends JPanel implements ListCellRenderer<Page> {
 
    @Override
    public Component getListCellRendererComponent(JList<? extends Page> jlist, Page e, int i, boolean bln, boolean bln1) {
-      int width  = getWidth();
+      int width = getWidth();
       int height = getHeight();
-      
+
       pageNumberLabel.setText(Integer.toString(i + 1));
       pageNumberLabel.setForeground(bln ? Color.RED : Color.BLACK);
       pageNumberLabel.setPreferredSize(new Dimension(30, height));

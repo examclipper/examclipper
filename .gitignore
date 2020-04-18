@@ -1,0 +1,8 @@
+# Ignore folders
+/target/
+/.settings/
+
+# Ignore files
+/.classpath
+/.project
+

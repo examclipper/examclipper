@@ -50,7 +50,6 @@ import javax.swing.UIManager;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.ScrollPaneConstants;
@@ -59,6 +58,7 @@ import javax.swing.SwingWorker;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileSystemView;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.application.Platform;
@@ -73,6 +73,8 @@ public class ExamClipperGUI extends JFrame {
    private static final int DEFAULT_HEIGHT = 490;
    private static final int MIN_WIDTH = 400;
    private static final int MIN_HEIGHT = 300;
+
+   private static final File DEFAULT_FILE = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath());
 
    private File selectedFile;
 
@@ -351,7 +353,7 @@ public class ExamClipperGUI extends JFrame {
 
          fileChooser = new FileChooser();
          fileChooser.setTitle("Abrir Projeto");
-         fileChooser.setInitialDirectory(project != null ? project.getLocation() : new File(System.getProperty("user.home")));
+         fileChooser.setInitialDirectory(project != null ? project.getLocation() : DEFAULT_FILE);
          fileChooser.getExtensionFilters().add(extentionFilter);
 
          File file = fileChooser.showOpenDialog(null);
@@ -368,7 +370,7 @@ public class ExamClipperGUI extends JFrame {
 
          fileChooser = new FileChooser();
          fileChooser.setTitle("Abrir PDF");
-         fileChooser.setInitialDirectory(selectedFile != null ? selectedFile : new File(System.getProperty("user.home")));
+         fileChooser.setInitialDirectory(selectedFile != null ? selectedFile : DEFAULT_FILE);
          fileChooser.getExtensionFilters().add(extentionFilter);
 
          File file = fileChooser.showOpenDialog(null);
@@ -383,7 +385,7 @@ public class ExamClipperGUI extends JFrame {
       Platform.runLater(() -> {
          directoryChooser = new DirectoryChooser();
          directoryChooser.setTitle("Salvar Recortes");
-         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+         directoryChooser.setInitialDirectory(DEFAULT_FILE);
 
          File file = directoryChooser.showDialog(null);
          if (file != null) {
